@@ -2,9 +2,9 @@ from omegaconf import OmegaConf
 
 config_dict = {
     'general': {
-        "experiment_name": "rf_st_gr_kfold_depth_leaf_search_100",
+        "experiment_name": "Baseline",
         "seed": 0xFACED,
-        "num_classes": 2 
+        "task_type": "regression" 
     },
     "paths": {
         "train_csv": "data_raw/train.csv",
@@ -12,6 +12,11 @@ config_dict = {
         "trained_models": "trained_models",
         "plots_dir": "plots",
     },
+    "target": {
+        "name": "SalePrice",
+        "log_transform": True
+    },
+
     "validation": {
         "strategy": "stratified_group_kfold",  # "stratified_kfold", 
                                                # "stratified_group_kfold"
@@ -228,7 +233,7 @@ config_dict = {
     },
 
     "metric": {
-        "name": "accuracy"
+        "name": "RMSE"
     },
     "inference": {
         "enabled": True,
