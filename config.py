@@ -17,6 +17,8 @@ config_dict = {
         "transform": "log1p"
     },
 
+    "id_column": "id",
+
     "validation": {
         "strategy": "stratified_kfold",
         "n_splits": 5,
@@ -67,6 +69,9 @@ config_dict = {
             "enabled": False,
         },
     },
+
+
+
 
 
     "modeling": {
