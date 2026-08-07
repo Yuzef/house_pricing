@@ -14,29 +14,35 @@ config_dict = {
     },
     "target": {
         "name": "SalePrice",
-        "log_transform": True
+        "transform": "log1p"
     },
 
     "validation": {
-        "strategy": "stratified_group_kfold",  # "stratified_kfold", 
-                                               # "stratified_group_kfold"
+        "strategy": "stratified_kfold",
         "n_splits": 5,
+        "n_bins": 10,
         "shuffle": True,
-        "target_column": "Survived",
-        "group_by": "family",
-        "family": {
-            "surname_column": "Name",
-            "sibsp_column": "SibSp",
-            "parch_column": "Parch",
-            "passenger_id_column": "PassengerId",
-            "solo_as_unique_group": True,
-            # Если человек путешествует один,
-            # лучше считать его отдельной “семьёй”,
-            # иначе можно случайно объединить незнакомых людей
-            # с одинаковой фамилией.
-        }
+        "target_column": "SalePrice",
     },
     "preprocessing": {
+        # Заполнение пропусков.
+        "numerical_imputation": {
+                "strategy": "median",
+        },
+        "categorical_imputation": {
+                "strategy": "most_frequent",
+        },
+
+
+
+
+
+
+
+
+
+
+
         "embarked": {
             "enabled": True,
             "strategy": "most_frequent",
