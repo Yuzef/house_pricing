@@ -24,127 +24,51 @@ config_dict = {
         "shuffle": True,
         "target_column": "SalePrice",
     },
+
     "preprocessing": {
         # Заполнение пропусков.
         "numerical_imputation": {
                 "strategy": "median",
         },
+
         "categorical_imputation": {
                 "strategy": "most_frequent",
         },
 
-
-
-
-
-
-
-
-
-
-
-        "embarked": {
-            "enabled": True,
-            "strategy": "most_frequent",
+        "nominal_encoding": {
+            "type": "one_hot",
+            "handle_unknown": "ignore",
         },
-        "age": {
-            "enabled": True,
-            "strategy": "mean_by_title"
-        },
-        "initial": {
-            "enabled": True,
-            "output_column": "Initial",
-        },
-        "age_binning": {
-            "enabled": True,
-            "strategy": "equal_width",   # "quantile"
-            "output_column": "Age_band",
-            "num_bins": 5,
-            "drop_original": True,
-        },
-        "categorical_encoding": {
-            "enabled": True,
 
-            "use_embedding": False,
-            "use_one_hot_encoding": True,
+        "ordinal_encoding": {
+            "enabled": False,
+        },
 
-            # Одни и те же категориальные признаки
-            # либо кодируем one-hot, либо передаём в Embedding.
-            "columns": [
-                "Embarked",
-                "Initial",
-            ],
-
-            
-            "mapping": {
-                "enabled": True, # False for pure catboost native categorical.
-                "columns": {
-                    "Sex": {
-                        "male": 0,
-                        "female": 1,
-                    },
-                },
-            },
-            # Используется только при one_hot_encoding.
-            "one_hot_params": {
-                "drop_first": True,   # для LogisticRegression можно попробовать
-                                      # поставить True
-            },
-        },
-        "family_features": {
+        "scaling": {
             "enabled": True,
-            "family_size_column": "Family_Size",
-            "alone_column": "Alone",
-            "drop_original": True,      # удалять ли потом SibSp и Parch
-                                        # (KNN, LogRef - True, деревья - False.)
-        },
-        "fare": { # если в тесте будет пропуск, то заменяем его значением median из train.
-            "enabled": True,
-            "strategy": "median",
-        },
-        "fare_binning": {
-            "enabled": True,
-            "strategy": "quantile",
-            "output_column": "Fare_Range",
-            "num_bins": 4,
-            "drop_original": True,
-        },
-        "features": {
-            "given_columns": [ # что изначально дали?
-                "PassengerId",
-                "Survived",
-                "Pclass",
-                "Name",
-                "Sex",
-                "Age",     # Исходная колонка до FE
-                "SibSp",   # Исходная колонка
-                "Parch",   # Исходная колонка
-                "Ticket",  # Удаляем
-                "Fare",    # Исходная колонка до FE
-                "Cabin",   # Удаляем
-                "Embarked",
-            ],
-            "use_columns": [    # что используем?
-                "Pclass",
-                "Sex",
-                # "Age",        # drop original ?
-                "Age_band",     # feature engineering
-                # "SibSp",      # drop original ?
-                # "Parch",      # drop original ?
-                # "Fare",       # drop original ?
-                "Fare_Range",   # feature engineering
-                "Family_Size",  # feature engineering
-                "Alone",        # feature engineering
-                # "Embarked",   # categorical_encoding
-                # "Initial",    # categorical_encoding
-            ],
-          
-            # "cat_features": [
-            #     "Sex", "Embarked", "Initial",
-            #     ]
-
         },
     },
+    
+    "feature_engineering": {
+
+        "age_features": {
+            "enabled": False,
+        },
+
+        "area_features": {
+            "enabled": False,
+        },
+
+        "bathroom_features": {
+            "enabled": False,
+        },
+
+        "quality_area_interaction": {
+            "enabled": False,
+        },
+    },
+
+
     "modeling": {
         # Приведение всех числовых признаков к одному масштабу.
         # StandardScaler(): x_scaled = (x - mean) / std
