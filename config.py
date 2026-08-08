@@ -17,7 +17,7 @@ config_dict = {
         "transform": "log1p"
     },
 
-    "id_column": "id",
+    "id_column": "Id",
 
     "validation": {
         "strategy": "stratified_kfold",

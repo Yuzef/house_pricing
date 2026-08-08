@@ -3,6 +3,7 @@ from config import config
 from pathlib import Path
 
 from utils.preprocessing import build_preprocessor
+from utils.feature_engineering import build_feature_engineer
 
 def main() -> None:
 
@@ -19,6 +20,8 @@ def main() -> None:
 
     X_test = test_df.drop(columns=id_column)
     test_ids = test_df[id_column].copy()
+
+    feature_engineer = build_feature_engineer(config.feature_engineering)
 
     preprocessor = build_preprocessor(config.preprocessing)
 
