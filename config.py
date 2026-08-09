@@ -96,7 +96,7 @@ config_dict = {
                 }
             }
         },
-        
+
     "dl": {
         "training": {
             "num_epochs": 150,
@@ -165,12 +165,8 @@ config_dict = {
 
     "inference": {
         "enabled": True,
-        "model_name": "rf_100_depth_5_leaf_3",  # если выбрать inference вручную
-                                                # по названию .joblib файла.
-        "use_best_model": True, # выберет _BEST .joblib 
-        "id_column": "PassengerId",
-        "prediction_column": "Survived",
-        "submission_dir": "submissions",
+        "prediction_column": "${target.name}",
+        "submission_filename": "submission.csv",
     },
     "logging": {
         "enabled": True,

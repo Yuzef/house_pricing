@@ -15,14 +15,13 @@ def setup_experiment_logger(experiment_dir: Path) -> logging.Logger:
         return logger
 
     formatter = logging.Formatter(
-        fmt=(
-            "%(asctime)s | %(levelname)s | %(message)s"
-        )
+        fmt=("%(asctime)s | %(levelname)s | %(message)s"),
         datefmt="%Y-%m-%d %H:%M:%S"
     )
 
     file_handler = logging.FileHandler(
         experiment_dir / "experiment.log",
+        mode="w",
         encoding="utf-8"
     )
     file_handler.setFormatter(formatter)

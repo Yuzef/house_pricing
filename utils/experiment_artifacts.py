@@ -26,7 +26,7 @@ def prepare_experiment_dir(config) -> Path:
 def save_model(model, experiment_dir: Path) -> Path:
     model_path = experiment_dir / "model.joblib"
 
-    joblib.jump(
+    joblib.dump(
         model,
         model_path,
         compress=3

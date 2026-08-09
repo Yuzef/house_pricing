@@ -26,7 +26,7 @@ def get_model_from_cfg(model_cfg):
 
     return TransformedTargetRegressor(
         regressor=experiment_model,
-        fung=np.log1p,
+        func=np.log1p,
         inverse_func=np.expm1
     )
 

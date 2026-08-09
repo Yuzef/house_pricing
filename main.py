@@ -1,8 +1,5 @@
 import numpy as np
 
-from sklearn.ensemble import (
-    RandomForestRegressor,
-)
 from sklearn.pipeline import Pipeline
 
 from utils.load_data import load_data_func
@@ -14,6 +11,8 @@ from utils.feature_engineering import build_feature_engineer
 
 from utils.validation import run_cross_validation
 from utils.modeling import get_model_from_cfg
+
+from utils.inference import create_submission
 
 from utils.experiment_artifacts import (
     prepare_experiment_dir,
@@ -92,6 +91,11 @@ def main() -> None:
     )
 
     logger.info(
+        "Metrics saved to: %s",
+        metrics_path,
+    )
+
+    logger.info(
         "CV %s: %.5f +/- %.5f",
         config.metric.name,
         mean_val_score,
@@ -113,12 +117,24 @@ def main() -> None:
         experiment_dir=experiment_dir
     )
 
-    print(f"Model saved to: {model_path}")
+    logger.info(
+        "Model saved to: %s",
+        model_path,
+    )
 
-    test_predictions = pipeline.predict(X_test)
-
-
-
+    if config.inference.enabled:
+        submission_path = create_submission(
+            model=pipeline,
+            X_test=X_test,
+            test_ids=test_ids,
+            id_columns=config.id_column,
+            prediction_column=config.inference.prediction_column,
+            experiment_dir=experiment_dir,
+            filename=config.inference.submission_filename
+        )
+    
+    logger.info("Submission saved to: %s", submission_path)
+    logger.info("Experiment completed successfully")
 
 
 if __name__ == "__main__":
