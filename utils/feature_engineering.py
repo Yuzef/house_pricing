@@ -1,7 +1,7 @@
 import pandas as pd
 
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessign import FunctionTransformer
+from sklearn.preprocessing import FunctionTransformer
 
 def add_age_features(X: pd.DataFrame) -> pd.DataFrame:
 
@@ -56,7 +56,7 @@ def add_quality_area_interaction(X: pd.DataFrame) -> pd.DataFrame:
     X = X.copy()
 
     X["OverallQual_GrLivArea"] = (
-        X["OverallQual"] * X["BrLivArea"]
+        X["OverallQual"] * X["GrLivArea"]
     )
 
     return X
@@ -66,8 +66,13 @@ def build_feature_engineer(config):
 
     if config.age_features.enabled:
         steps.append(
-            "age_features",
-            FunctionTransformer()
+            (
+                "age_features",
+                FunctionTransformer(
+                    add_age_features,
+                    validate=False
+                )
+            )
         )
 
     if config.area_features.enabled:

@@ -112,7 +112,7 @@ def build_preprocessor(cfg_preprocessing) -> ColumnTransformer:
         (
             "imputer",
             SimpleImputer(
-                stategy=(
+                strategy=(
                     cfg_preprocessing
                     .categorical_imputation
                     .strategy
@@ -150,11 +150,13 @@ def build_preprocessor(cfg_preprocessing) -> ColumnTransformer:
         )
     ]
 
-    if cfg_preprocessing.ordinal_encoding.ebabled:
+    if cfg_preprocessing.ordinal_encoding.enabled:
         transformers.append(
+            (
             "ordinal_quality",
             ordinal_pipeline,
             list(ORDINAL_QUALITY_COLUMNS)
+            )
         )
         categorical_selector = select_nominal_columns
     

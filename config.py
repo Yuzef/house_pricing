@@ -16,6 +16,11 @@ config_dict = {
         "name": "SalePrice",
         "transform": "log1p"
     },
+    "metric": {
+        "name": "RMSLE", # TransformedTargetRegressor возвращает предсказания
+                        # обратно в долларах.
+        "sklearn_scoring": "neg_root_mean_squared_log_error"
+    },
 
     "id_column": "Id",
 
@@ -24,7 +29,9 @@ config_dict = {
         "n_splits": 5,
         "n_bins": 10,
         "shuffle": True,
-        "target_column": "SalePrice",
+        "random_state": "${general.seed}",
+        "n_jobs": 6,
+        "return_train_score": True
     },
 
     "preprocessing": {
@@ -70,37 +77,26 @@ config_dict = {
         },
     },
 
-
-
-
-
-    "modeling": {
-        # Приведение всех числовых признаков к одному масштабу.
-        # StandardScaler(): x_scaled = (x - mean) / std
-        # LogReg - True, KNN - True, RandomForest - False, Boosting - False
-        "scale_features": False, # True для DL, False для бустингов.
-        # Использовать все доступные ядра процессора "-1".
-        #n_jobs=6 — использовать ровно 6 ядер.
-        "n_jobs": 6,
-
-        "models": [
-            {
-                "name": f"rf_100_depth_{depth}_leaf_{leaf}",
-                "enabled": True,
-                "type": "random_forest",
-                "params": {
-                    "n_estimators": 100,
-                    "max_depth": depth,
-                    "min_samples_split": 2,
-                    "min_samples_leaf": leaf,
-                    "max_features": "sqrt",
-                    "bootstrap": True,
-                },
+    "model": {
+            "name": f"rf_100_depth_6_leaf_2",
+            "type": "random_forest",
+            "params": {
+                "n_estimators": 100,
+                "max_depth": 6,
+                "min_samples_split": 2,
+                "min_samples_leaf": 2,
+                "max_features": "sqrt",
+                "bootstrap": True,
+                "random_state": "${general.seed}",
+                "n_jobs": 1,
+            },
+            "ridge":{
+                "params":{
+                    "alpha": 10.0
+                }
             }
-            for depth in range(4, 8)
-            for leaf in range(1, 5)
-        ]
-    },
+        },
+        
     "dl": {
         "training": {
             "num_epochs": 150,
@@ -167,9 +163,6 @@ config_dict = {
         },
     },
 
-    "metric": {
-        "name": "RMSE"
-    },
     "inference": {
         "enabled": True,
         "model_name": "rf_100_depth_5_leaf_3",  # если выбрать inference вручную
