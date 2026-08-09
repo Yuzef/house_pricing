@@ -20,8 +20,17 @@ from utils.experiment_artifacts import (
     save_model,
 )
 
+from utils.experiment_logging import (
+    save_cv_results,
+    save_metrics,
+    setup_experiment_logger,
+)
+
 def main() -> None:
     experiment_dir = prepare_experiment_dir(config)
+
+    logger = setup_experiment_logger(experiment_dir)
+    logger.info("Experiment started: %s", config.model.name)
 
     target_column = config.target.name
     id_column = config.id_column
@@ -29,6 +38,12 @@ def main() -> None:
     train_df, test_df = load_data_func(
         config.paths.train_csv,
         config.paths.test_csv,
+    )
+
+    logger.info(
+        "Data loaded: train=%s, test=%s",
+        train_df.shape,
+        test_df.shape
     )
 
     X_train = train_df.drop(columns=[id_column, target_column])
@@ -61,13 +76,31 @@ def main() -> None:
 
     print(fold_results)
 
-    mean_val_scores = fold_results["validation_score"].mean()
-    std_val_scores = fold_results["validation_score"].std()
+    mean_val_score = fold_results["validation_score"].mean()
+    std_val_score = fold_results["validation_score"].std()
 
-    print(
-        f"CV {config.metric.name}: "
-        f"{mean_val_scores:.5f} "
-        f"+/- {std_val_scores:.5f}"
+    cv_results_path = save_cv_results(
+        fold_results=fold_results,
+        experiment_dir=experiment_dir
+    )
+
+    metrics_path = save_metrics(
+        metric_name=config.metric.name,
+        mean_score=mean_val_score,
+        std_score=std_val_score,
+        experiment_dir=experiment_dir
+    )
+
+    logger.info(
+        "CV %s: %.5f +/- %.5f",
+        config.metric.name,
+        mean_val_score,
+        std_val_score
+    )
+
+    logger.info(
+        "CV results saved to: %s",
+        cv_results_path
     )
 
     # cross_validate() обучает отдельные копии pipeline для folds.
@@ -79,7 +112,7 @@ def main() -> None:
         model=pipeline,
         experiment_dir=experiment_dir
     )
-    
+
     print(f"Model saved to: {model_path}")
 
     test_predictions = pipeline.predict(X_test)
