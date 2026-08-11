@@ -1,5 +1,3 @@
-import numpy as np
-
 from sklearn.pipeline import Pipeline
 
 from utils.load_data import load_data_func
@@ -10,7 +8,6 @@ from utils.preprocessing import build_preprocessor
 from utils.feature_engineering import build_feature_engineer
 
 from utils.validation import run_cross_validation
-from utils.modeling import get_model_from_cfg
 from utils.model_selection import build_grid_search
 
 from utils.inference import create_submission
@@ -21,7 +18,9 @@ from utils.experiment_artifacts import (
 )
 
 from utils.experiment_logging import (
+    save_best_params,
     save_cv_results,
+    save_grid_search_results,
     save_metrics,
     setup_experiment_logger,
 )

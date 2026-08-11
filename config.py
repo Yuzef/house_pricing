@@ -84,15 +84,7 @@ config_dict = {
             "alpha": 1.0,
             "fit_intercept": True, # модель сама вычисляет b0
         },
-        "param_grid": {
-            "model__regressor__alpha":[
-                0.01,
-                0.1,
-                1.0,
-                10.0,
-                100.0
-            ]
-        }
+
 
             # random forest
 
@@ -117,14 +109,25 @@ config_dict = {
 
         "tuning": {
             "enabled": True,
+            
             "inner_cv": {
                 "n_splits": 5,
                 "shuffle": True,
                 "random_state": "${general.seed}",
             },
+
             "n_jobs": 5,
             "verbose": 1,
-            "param_grid": {},
+
+            "param_grid": {
+                "model__regressor__alpha":[
+                    0.01,
+                    0.1,
+                    1.0,
+                    10.0,
+                    100.0
+                ]
+            }
         },
 
     # "dl": {

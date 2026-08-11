@@ -35,7 +35,7 @@ def build_cv_splits(
     if cfg_validation.strategy != "stratified_kfold":
         raise ValueError(
             f"Unsupported validation strategy: "
-            f"{cfg_validation.stategy}"
+            f"{cfg_validation.strategy}"
         )
     
     n_splits = int(cfg_validation.n_splits)
