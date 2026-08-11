@@ -50,7 +50,7 @@ config_dict = {
         },
 
         "ordinal_encoding": {
-            "enabled": False,
+            "enabled": True,
         },
 
         "scaling": {
@@ -61,7 +61,7 @@ config_dict = {
     "feature_engineering": {
 
         "age_features": {
-            "enabled": True,
+            "enabled": False,
         },
 
         "area_features": {
@@ -73,12 +73,12 @@ config_dict = {
         },
 
         "quality_area_interaction": {
-            "enabled": False,
+            "enabled": True,
         },
     },
 
     "model": {
-        "name": "2_lin_reg_BL_age_features",
+        "name": "7_lin_reg_BL_qual_area_inter_plus_ord_enc",
         "type": "linear_regression",
         "params": {
             "fit_intercept": True, # модель сама вычисляет b0

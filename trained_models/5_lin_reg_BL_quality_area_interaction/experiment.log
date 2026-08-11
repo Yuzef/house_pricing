@@ -1,0 +1,8 @@
+2026-08-11 17:21:53 | INFO | Experiment started: 5_lin_reg_BL_quality_area_interaction
+2026-08-11 17:21:53 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-11 17:21:54 | INFO | Metrics saved to: trained_models/5_lin_reg_BL_quality_area_interaction/metrics.json
+2026-08-11 17:21:54 | INFO | CV RMSLE: 0.14969 +/- 0.02430
+2026-08-11 17:21:54 | INFO | CV results saved to: trained_models/5_lin_reg_BL_quality_area_interaction/cv_results.csv
+2026-08-11 17:21:54 | INFO | Model saved to: trained_models/5_lin_reg_BL_quality_area_interaction/model.joblib
+2026-08-11 17:21:54 | INFO | Submission saved to: trained_models/5_lin_reg_BL_quality_area_interaction/submission.csv
+2026-08-11 17:21:54 | INFO | Experiment completed successfully

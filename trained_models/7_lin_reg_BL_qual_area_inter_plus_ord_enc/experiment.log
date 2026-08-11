@@ -1,0 +1,8 @@
+2026-08-11 17:37:50 | INFO | Experiment started: 7_lin_reg_BL_qual_area_inter_plus_ord_enc
+2026-08-11 17:37:50 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-11 17:37:52 | INFO | Metrics saved to: trained_models/7_lin_reg_BL_qual_area_inter_plus_ord_enc/metrics.json
+2026-08-11 17:37:52 | INFO | CV RMSLE: 0.15125 +/- 0.03019
+2026-08-11 17:37:52 | INFO | CV results saved to: trained_models/7_lin_reg_BL_qual_area_inter_plus_ord_enc/cv_results.csv
+2026-08-11 17:37:52 | INFO | Model saved to: trained_models/7_lin_reg_BL_qual_area_inter_plus_ord_enc/model.joblib
+2026-08-11 17:37:52 | INFO | Submission saved to: trained_models/7_lin_reg_BL_qual_area_inter_plus_ord_enc/submission.csv
+2026-08-11 17:37:52 | INFO | Experiment completed successfully

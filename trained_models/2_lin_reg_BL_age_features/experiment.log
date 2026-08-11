@@ -1,0 +1,8 @@
+2026-08-11 17:15:42 | INFO | Experiment started: 2_lin_reg_BL_age_features
+2026-08-11 17:15:42 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-11 17:15:43 | INFO | Metrics saved to: trained_models/2_lin_reg_BL_age_features/metrics.json
+2026-08-11 17:15:43 | INFO | CV RMSLE: 0.15588 +/- 0.03157
+2026-08-11 17:15:43 | INFO | CV results saved to: trained_models/2_lin_reg_BL_age_features/cv_results.csv
+2026-08-11 17:15:44 | INFO | Model saved to: trained_models/2_lin_reg_BL_age_features/model.joblib
+2026-08-11 17:15:44 | INFO | Submission saved to: trained_models/2_lin_reg_BL_age_features/submission.csv
+2026-08-11 17:15:44 | INFO | Experiment completed successfully

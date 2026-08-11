@@ -1,0 +1,8 @@
+2026-08-11 17:18:01 | INFO | Experiment started: 3_lin_reg_BL_area_features
+2026-08-11 17:18:01 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-11 17:18:02 | INFO | Metrics saved to: trained_models/3_lin_reg_BL_area_features/metrics.json
+2026-08-11 17:18:02 | INFO | CV RMSLE: 0.15516 +/- 0.03072
+2026-08-11 17:18:02 | INFO | CV results saved to: trained_models/3_lin_reg_BL_area_features/cv_results.csv
+2026-08-11 17:18:03 | INFO | Model saved to: trained_models/3_lin_reg_BL_area_features/model.joblib
+2026-08-11 17:18:03 | INFO | Submission saved to: trained_models/3_lin_reg_BL_area_features/submission.csv
+2026-08-11 17:18:03 | INFO | Experiment completed successfully

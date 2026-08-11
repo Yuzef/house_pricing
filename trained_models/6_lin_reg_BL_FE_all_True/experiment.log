@@ -1,0 +1,8 @@
+2026-08-11 17:34:06 | INFO | Experiment started: 6_lin_reg_BL_FE_all_True
+2026-08-11 17:34:06 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-11 17:34:08 | INFO | Metrics saved to: trained_models/6_lin_reg_BL_FE_all_True/metrics.json
+2026-08-11 17:34:08 | INFO | CV RMSLE: 0.15000 +/- 0.02425
+2026-08-11 17:34:08 | INFO | CV results saved to: trained_models/6_lin_reg_BL_FE_all_True/cv_results.csv
+2026-08-11 17:34:08 | INFO | Model saved to: trained_models/6_lin_reg_BL_FE_all_True/model.joblib
+2026-08-11 17:34:08 | INFO | Submission saved to: trained_models/6_lin_reg_BL_FE_all_True/submission.csv
+2026-08-11 17:34:08 | INFO | Experiment completed successfully

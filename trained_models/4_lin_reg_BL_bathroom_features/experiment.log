@@ -1,0 +1,8 @@
+2026-08-11 17:19:39 | INFO | Experiment started: 4_lin_reg_BL_bathroom_features
+2026-08-11 17:19:39 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-11 17:19:40 | INFO | Metrics saved to: trained_models/4_lin_reg_BL_bathroom_features/metrics.json
+2026-08-11 17:19:40 | INFO | CV RMSLE: 0.15515 +/- 0.03072
+2026-08-11 17:19:40 | INFO | CV results saved to: trained_models/4_lin_reg_BL_bathroom_features/cv_results.csv
+2026-08-11 17:19:40 | INFO | Model saved to: trained_models/4_lin_reg_BL_bathroom_features/model.joblib
+2026-08-11 17:19:40 | INFO | Submission saved to: trained_models/4_lin_reg_BL_bathroom_features/submission.csv
+2026-08-11 17:19:40 | INFO | Experiment completed successfully
