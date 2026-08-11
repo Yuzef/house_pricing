@@ -2,6 +2,7 @@ import numpy as np
 
 from omegaconf import OmegaConf
 
+from sklearn.linear_model import LinearRegression
 from sklearn.compose import TransformedTargetRegressor
 from sklearn.ensemble import RandomForestRegressor
 
@@ -14,7 +15,12 @@ def get_model_from_cfg(model_cfg):
         throw_on_missing=True
     )
 
-    if model_type == "random_forest":
+    if model_type == "linear_regression":
+        experiment_model = LinearRegression(
+            **model_params
+        )
+
+    elif model_type == "random_forest":
         experiment_model = RandomForestRegressor(
             **model_params
         )

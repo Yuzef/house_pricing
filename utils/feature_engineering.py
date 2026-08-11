@@ -60,7 +60,7 @@ def add_quality_area_interaction(X: pd.DataFrame) -> pd.DataFrame:
     )
 
     return X
-
+ 
 def build_feature_engineer(config):
     steps = []
 

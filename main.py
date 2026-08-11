@@ -127,13 +127,14 @@ def main() -> None:
             model=pipeline,
             X_test=X_test,
             test_ids=test_ids,
-            id_columns=config.id_column,
+            id_column=config.id_column,
             prediction_column=config.inference.prediction_column,
             experiment_dir=experiment_dir,
             filename=config.inference.submission_filename
         )
     
-    logger.info("Submission saved to: %s", submission_path)
+        logger.info("Submission saved to: %s", submission_path)
+        
     logger.info("Experiment completed successfully")
 
 

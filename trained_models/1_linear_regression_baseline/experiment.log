@@ -1,0 +1,8 @@
+2026-08-11 16:58:13 | INFO | Experiment started: 1_linear_regression_baseline
+2026-08-11 16:58:13 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-11 16:58:15 | INFO | Metrics saved to: trained_models/1_linear_regression_baseline/metrics.json
+2026-08-11 16:58:15 | INFO | CV RMSLE: 0.15515 +/- 0.03072
+2026-08-11 16:58:15 | INFO | CV results saved to: trained_models/1_linear_regression_baseline/cv_results.csv
+2026-08-11 16:58:15 | INFO | Model saved to: trained_models/1_linear_regression_baseline/model.joblib
+2026-08-11 16:58:15 | INFO | Submission saved to: trained_models/1_linear_regression_baseline/submission.csv
+2026-08-11 16:58:15 | INFO | Experiment completed successfully
