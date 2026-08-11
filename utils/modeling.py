@@ -2,7 +2,12 @@ import numpy as np
 
 from omegaconf import OmegaConf
 
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import (
+    ElasticNet,
+    Lasso,
+    Ridge,
+    LinearRegression
+)
 from sklearn.compose import TransformedTargetRegressor
 from sklearn.ensemble import RandomForestRegressor
 
@@ -18,6 +23,21 @@ def get_model_from_cfg(model_cfg):
     if model_type == "linear_regression":
         experiment_model = LinearRegression(
             **model_params
+        )
+        
+    elif model_type == "ridge":
+        experiment_model = Ridge(
+            **model_params,
+        )
+
+    elif model_type == "lasso":
+        experiment_model = Lasso(
+            **model_params,
+        )
+
+    elif model_type == "elastic_net":
+        experiment_model = ElasticNet(
+            **model_params,
         )
 
     elif model_type == "random_forest":

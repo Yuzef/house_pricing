@@ -30,7 +30,7 @@ config_dict = {
         "n_bins": 10,
         "shuffle": True,
         "random_state": "${general.seed}",
-        "n_jobs": 6,
+        "n_jobs": 1, # 5 будет использовано при GridSearchCV.
         "return_train_score": True
     },
 
@@ -50,7 +50,7 @@ config_dict = {
         },
 
         "ordinal_encoding": {
-            "enabled": True,
+            "enabled": False,
         },
 
         "scaling": {
@@ -103,6 +103,18 @@ config_dict = {
             #         "alpha": 10.0
             #     }
             # }
+        },
+
+        "tuning": {
+            "enabled": True,
+            "inner_cv": {
+                "n_splits": 5,
+                "shuffle": True,
+                "random_state": "${general.seed}",
+            },
+            "n_jobs": 5,
+            "verbose": 1,
+            "param_grid": {},
         },
 
     # "dl": {
