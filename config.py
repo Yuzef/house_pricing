@@ -78,11 +78,21 @@ config_dict = {
     },
 
     "model": {
-        "name": "7_lin_reg_BL_qual_area_inter_plus_ord_enc",
-        "type": "linear_regression",
+        "name": "8_ridge_grid_quality_area",
+        "type": "ridge",
         "params": {
+            "alpha": 1.0,
             "fit_intercept": True, # модель сама вычисляет b0
         },
+        "param_grid": {
+            "model__regressor__alpha":[
+                0.01,
+                0.1,
+                1.0,
+                10.0,
+                100.0
+            ]
+        }
 
             # random forest
 

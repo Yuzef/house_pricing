@@ -11,6 +11,7 @@ from utils.feature_engineering import build_feature_engineer
 
 from utils.validation import run_cross_validation
 from utils.modeling import get_model_from_cfg
+from utils.model_selection import build_grid_search
 
 from utils.inference import create_submission
 
@@ -64,6 +65,13 @@ def main() -> None:
             ("model", model)
         ]
     )
+
+    if config.tuning.enabled:
+        estimator_for_cv = build_grid_search(
+            estimator=pipeline,
+            cfg_tuning=config.tuning,
+            cfg_metric=config.metric
+        )
 
     fold_results = run_cross_validation(
         estimator=pipeline,
@@ -134,7 +142,7 @@ def main() -> None:
         )
     
         logger.info("Submission saved to: %s", submission_path)
-        
+
     logger.info("Experiment completed successfully")
 
 
