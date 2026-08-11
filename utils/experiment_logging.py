@@ -68,4 +68,28 @@ def save_metrics(
     
     return metrics_path
 
+def save_grid_search_results(grid_search, experiment_dir) -> Path:
+    results_path = experiment_dir / "grid_search_results.csv"
 
+    pd.DataFrame(grid_search.cv_results_).to_csv(
+        results_path,
+        index=False
+        )
+    
+    return results_path
+
+def save_best_params(best_params, experiment_dir) -> Path:
+    best_params_path = experiment_dir / "best_params.json"
+
+    with best_params_path.open(
+        mode="w",
+        encoding="utf-8"
+    ) as file:
+        json.dump(
+            best_params,
+            file,
+            indent=2,
+            ensure_ascii=False
+        )
+    
+    return best_params_path

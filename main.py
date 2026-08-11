@@ -72,9 +72,11 @@ def main() -> None:
             cfg_tuning=config.tuning,
             cfg_metric=config.metric
         )
+    else:
+        estimator_for_cv = pipeline
 
     fold_results = run_cross_validation(
-        estimator=pipeline,
+        estimator=estimator_for_cv,
         X=X_train,
         y=y_train,
         cfg_validation=config.validation,
@@ -118,10 +120,43 @@ def main() -> None:
     # cross_validate() обучает отдельные копии pipeline для folds.
     # Исходный объект pipeline после CV
     # не становится финальной обученной моделью.
-    pipeline.fit(X_train,y_train)
+    if config.tuning.enabled:
+        grid_search = build_grid_search(
+            estimator=pipeline,
+            cfg_tuning=config.tuning,
+            cfg_metric=config.metric
+        )
+
+        grid_search.fit(X_train, y_train)
+
+        grid_results_path = save_grid_search_results(
+            grid_search=grid_search,
+            experiment_dir=experiment_dir
+        )
+
+        best_params_path = save_best_params(
+            best_params=grid_search.best_params_,
+            experiment_dir=experiment_dir
+        )
+
+        final_pipeline = grid_search.best_estimator_
+
+        logger.info(
+            "Best parameters: %s",
+            grid_search.best_params_
+            )
+
+        logger.info(
+            "Best inner CV RMSLE: %.5f",
+            -grid_search.best_score_,
+        )
+    
+    else:
+        pipeline.fit(X_train, y_train)
+        final_pipeline = pipeline
 
     model_path = save_model(
-        model=pipeline,
+        model=final_pipeline,
         experiment_dir=experiment_dir
     )
 
@@ -132,7 +167,7 @@ def main() -> None:
 
     if config.inference.enabled:
         submission_path = create_submission(
-            model=pipeline,
+            model=final_pipeline,
             X_test=X_test,
             test_ids=test_ids,
             id_column=config.id_column,
