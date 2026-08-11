@@ -1,0 +1,10 @@
+2026-08-12 01:10:12 | INFO | Experiment started: 8_ridge_grid_quality_area
+2026-08-12 01:10:12 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-12 01:10:14 | INFO | Metrics saved to: trained_models/8_ridge_grid_quality_area/metrics.json
+2026-08-12 01:10:14 | INFO | CV RMSLE: 0.13707 +/- 0.02734
+2026-08-12 01:10:14 | INFO | CV results saved to: trained_models/8_ridge_grid_quality_area/cv_results.csv
+2026-08-12 01:10:15 | INFO | Best parameters: {'model__regressor__alpha': 10.0}
+2026-08-12 01:10:15 | INFO | Best inner CV RMSLE: 0.13724
+2026-08-12 01:10:15 | INFO | Model saved to: trained_models/8_ridge_grid_quality_area/model.joblib
+2026-08-12 01:10:15 | INFO | Submission saved to: trained_models/8_ridge_grid_quality_area/submission.csv
+2026-08-12 01:10:15 | INFO | Experiment completed successfully
