@@ -78,66 +78,51 @@ config_dict = {
     },
 
     "model": {
-        "name": "10_elastic_net_grid_quality_area",
-        "type": "elastic_net",
+        "name": "11_knn_grid_quality_area",
+        "type": "knn",
         "params": {
-            "alpha": 0.0005,
-            "l1_ratio": 0.5,
-            "fit_intercept": True,
-            "max_iter": 20000,
-            "tol": 0.0001,
-            "selection": "cyclic",
+            "n_neighbors": 10,
+            "weights": "uniform",
+            "metric": "euclidean",
+            "algorithm": "brute",
+            "n_jobs": 1,
+        },
+    },
+
+    "tuning": {
+        "enabled": True,
+
+        "inner_cv": {
+            "n_splits": 5,
+            "shuffle": True,
+            "random_state": "${general.seed}",
         },
 
+        "n_jobs": 5,
+        "verbose": 1,
 
-            # random forest
+        "param_grid": {
+            "model__regressor__n_neighbors": [
+                3,
+                5,
+                7,
+                11,
+                15,
+                21,
+                31,
+            ],
 
-            # "name": f"rf_100_depth_6_leaf_2",
-            # "type": "random_forest",
-            # "params": {
-            #     "n_estimators": 100,
-            #     "max_depth": 6,
-            #     "min_samples_split": 2,
-            #     "min_samples_leaf": 2,
-            #     "max_features": "sqrt",
-            #     "bootstrap": True,
-            #     "random_state": "${general.seed}",
-            #     "n_jobs": 1,
-            # },
-            # "ridge":{
-            #     "params":{
-            #         "alpha": 10.0
-            #     }
-            # }
+            "model__regressor__weights": [
+                "uniform",
+                "distance",
+            ],
+
+            "model__regressor__metric": [
+                "euclidean",
+                "manhattan",
+            ],
         },
-
-        "tuning": {
-            "enabled": True,
-
-            "inner_cv": {
-                "n_splits": 5,
-                "shuffle": True,
-                "random_state": "${general.seed}",
-            },
-
-            "n_jobs": 5,
-            "verbose": 1,
-
-            "param_grid": {
-                "model__regressor__alpha": [
-                    0.00005,
-                    0.0001,
-                    0.0005,
-                    0.001,
-                    0.005,
-                ],
-                "model__regressor__l1_ratio": [
-                    0.2,
-                    0.5,
-                    0.8,
-                ],
-            },
-        },
+    },
 
     # "dl": {
     #     "training": {

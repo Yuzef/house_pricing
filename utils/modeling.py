@@ -1,5 +1,7 @@
 import numpy as np
 
+from sklearn.neighbors import KNeighborsRegressor
+
 from omegaconf import OmegaConf
 
 from sklearn.linear_model import (
@@ -24,7 +26,7 @@ def get_model_from_cfg(model_cfg):
         experiment_model = LinearRegression(
             **model_params
         )
-        
+
     elif model_type == "ridge":
         experiment_model = Ridge(
             **model_params,
@@ -38,6 +40,11 @@ def get_model_from_cfg(model_cfg):
     elif model_type == "elastic_net":
         experiment_model = ElasticNet(
             **model_params,
+        )
+    
+    elif model_type == "knn":
+        experiment_model = KNeighborsRegressor(
+            **model_params
         )
 
     elif model_type == "random_forest":

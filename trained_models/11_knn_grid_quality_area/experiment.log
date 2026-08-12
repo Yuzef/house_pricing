@@ -1,0 +1,10 @@
+2026-08-12 14:40:03 | INFO | Experiment started: 11_knn_grid_quality_area
+2026-08-12 14:40:03 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-12 14:40:33 | INFO | Metrics saved to: trained_models/11_knn_grid_quality_area/metrics.json
+2026-08-12 14:40:33 | INFO | CV RMSLE: 0.16251 +/- 0.01157
+2026-08-12 14:40:33 | INFO | CV results saved to: trained_models/11_knn_grid_quality_area/cv_results.csv
+2026-08-12 14:40:41 | INFO | Best parameters: {'model__regressor__metric': 'manhattan', 'model__regressor__n_neighbors': 5, 'model__regressor__weights': 'distance'}
+2026-08-12 14:40:41 | INFO | Best inner CV RMSLE: 0.16135
+2026-08-12 14:40:41 | INFO | Model saved to: trained_models/11_knn_grid_quality_area/model.joblib
+2026-08-12 14:40:41 | INFO | Submission saved to: trained_models/11_knn_grid_quality_area/submission.csv
+2026-08-12 14:40:41 | INFO | Experiment completed successfully
