@@ -1,0 +1,6 @@
+{
+  "model__regressor__max_depth": 10,
+  "model__regressor__max_features": 0.5,
+  "model__regressor__min_samples_leaf": 10,
+  "model__regressor__min_samples_split": 2
+}

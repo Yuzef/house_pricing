@@ -78,14 +78,17 @@ config_dict = {
     },
 
     "model": {
-        "name": "11_knn_grid_quality_area",
-        "type": "knn",
+        "name": "12_decision_tree_grid_quality_area",
+        "type": "decision_tree",
+
         "params": {
-            "n_neighbors": 10,
-            "weights": "uniform",
-            "metric": "euclidean",
-            "algorithm": "brute",
-            "n_jobs": 1,
+            "criterion": "squared_error",
+            "splitter": "best",
+            "max_depth": None,
+            "min_samples_split": 2,
+            "min_samples_leaf": 1,
+            "max_features": None,
+            "random_state": "${general.seed}",
         },
     },
 
@@ -102,24 +105,36 @@ config_dict = {
         "verbose": 1,
 
         "param_grid": {
-            "model__regressor__n_neighbors": [
+            "model__regressor__max_depth": [
                 3,
                 5,
                 7,
-                11,
-                15,
-                21,
-                31,
+                10,
+                None,
             ],
 
-            "model__regressor__weights": [
-                "uniform",
-                "distance",
+            "model__regressor__min_samples_split": [
+                2,
+                3,
+                5,
+                7,
+                10,
             ],
 
-            "model__regressor__metric": [
-                "euclidean",
-                "manhattan",
+            "model__regressor__min_samples_leaf": [
+                1,
+                3,
+                5,
+                7,
+                10,
+            ],
+
+            "model__regressor__max_features": [
+                None,
+                0.9,
+                0.8,
+                0.7,
+                0.5,
             ],
         },
     },

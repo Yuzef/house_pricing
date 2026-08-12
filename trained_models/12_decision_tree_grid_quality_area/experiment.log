@@ -1,0 +1,10 @@
+2026-08-12 14:59:24 | INFO | Experiment started: 12_decision_tree_grid_quality_area
+2026-08-12 14:59:24 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-12 15:01:47 | INFO | Metrics saved to: trained_models/12_decision_tree_grid_quality_area/metrics.json
+2026-08-12 15:01:47 | INFO | CV RMSLE: 0.17768 +/- 0.01342
+2026-08-12 15:01:47 | INFO | CV results saved to: trained_models/12_decision_tree_grid_quality_area/cv_results.csv
+2026-08-12 15:02:21 | INFO | Best parameters: {'model__regressor__max_depth': 10, 'model__regressor__max_features': 0.5, 'model__regressor__min_samples_leaf': 10, 'model__regressor__min_samples_split': 2}
+2026-08-12 15:02:21 | INFO | Best inner CV RMSLE: 0.17754
+2026-08-12 15:02:21 | INFO | Model saved to: trained_models/12_decision_tree_grid_quality_area/model.joblib
+2026-08-12 15:02:21 | INFO | Submission saved to: trained_models/12_decision_tree_grid_quality_area/submission.csv
+2026-08-12 15:02:21 | INFO | Experiment completed successfully

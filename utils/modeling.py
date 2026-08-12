@@ -2,6 +2,8 @@ import numpy as np
 
 from sklearn.neighbors import KNeighborsRegressor
 
+from sklearn.tree import DecisionTreeRegressor
+
 from omegaconf import OmegaConf
 
 from sklearn.linear_model import (
@@ -44,6 +46,11 @@ def get_model_from_cfg(model_cfg):
     
     elif model_type == "knn":
         experiment_model = KNeighborsRegressor(
+            **model_params
+        )
+    
+    elif model_type == "decision_tree":
+        experiment_model = DecisionTreeRegressor(
             **model_params
         )
 
