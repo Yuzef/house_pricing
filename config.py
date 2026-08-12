@@ -78,11 +78,15 @@ config_dict = {
     },
 
     "model": {
-        "name": "8_ridge_grid_quality_area",
-        "type": "ridge",
+        "name": "10_elastic_net_grid_quality_area",
+        "type": "elastic_net",
         "params": {
-            "alpha": 1.0,
-            "fit_intercept": True, # модель сама вычисляет b0
+            "alpha": 0.0005,
+            "l1_ratio": 0.5,
+            "fit_intercept": True,
+            "max_iter": 20000,
+            "tol": 0.0001,
+            "selection": "cyclic",
         },
 
 
@@ -109,7 +113,7 @@ config_dict = {
 
         "tuning": {
             "enabled": True,
-            
+
             "inner_cv": {
                 "n_splits": 5,
                 "shuffle": True,
@@ -120,14 +124,19 @@ config_dict = {
             "verbose": 1,
 
             "param_grid": {
-                "model__regressor__alpha":[
-                    0.01,
-                    0.1,
-                    1.0,
-                    10.0,
-                    100.0
-                ]
-            }
+                "model__regressor__alpha": [
+                    0.00005,
+                    0.0001,
+                    0.0005,
+                    0.001,
+                    0.005,
+                ],
+                "model__regressor__l1_ratio": [
+                    0.2,
+                    0.5,
+                    0.8,
+                ],
+            },
         },
 
     # "dl": {
