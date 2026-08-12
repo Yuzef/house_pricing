@@ -15,6 +15,10 @@ from sklearn.linear_model import (
 from sklearn.compose import TransformedTargetRegressor
 from sklearn.ensemble import RandomForestRegressor
 
+from catboost import CatBoostRegressor
+from lightgbm import LGBMRegressor
+from xgboost import XGBRegressor
+
 def get_model_from_cfg(model_cfg):
     model_type = str(model_cfg.type)
 
@@ -56,6 +60,21 @@ def get_model_from_cfg(model_cfg):
 
     elif model_type == "random_forest":
         experiment_model = RandomForestRegressor(
+            **model_params
+        )
+    
+    elif model_type == "catboost":
+        experiment_model = CatBoostRegressor(
+            **model_params
+        )
+
+    elif model_type == "lightgbm":
+        experiment_model = LGBMRegressor(
+            **model_params
+        )
+
+    elif model_type == "xgboost":
+        experiment_model = XGBRegressor(
             **model_params
         )
     
