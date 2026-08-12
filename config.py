@@ -78,16 +78,18 @@ config_dict = {
     },
 
     "model": {
-        "name": "12_decision_tree_grid_quality_area",
-        "type": "decision_tree",
+        "name": "14_random_forest_refined_grid_quality_area",
+        "type": "random_forest",
 
         "params": {
+            "n_estimators": 500,
             "criterion": "squared_error",
-            "splitter": "best",
             "max_depth": None,
             "min_samples_split": 2,
             "min_samples_leaf": 1,
-            "max_features": None,
+            "max_features": 0.5,
+            "bootstrap": True,
+            "n_jobs": 1,
             "random_state": "${general.seed}",
         },
     },
@@ -105,36 +107,18 @@ config_dict = {
         "verbose": 1,
 
         "param_grid": {
-            "model__regressor__max_depth": [
-                3,
-                5,
-                7,
-                10,
-                None,
-            ],
-
-            "model__regressor__min_samples_split": [
-                2,
-                3,
-                5,
-                7,
-                10,
+            "model__regressor__max_features": [
+                0.2,
+                0.3,
+                0.4,
+                0.5,
+                0.6,
             ],
 
             "model__regressor__min_samples_leaf": [
                 1,
+                2,
                 3,
-                5,
-                7,
-                10,
-            ],
-
-            "model__regressor__max_features": [
-                None,
-                0.9,
-                0.8,
-                0.7,
-                0.5,
             ],
         },
     },

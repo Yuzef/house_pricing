@@ -1,0 +1,4 @@
+{
+  "model__regressor__max_features": 0.3,
+  "model__regressor__min_samples_leaf": 1
+}
