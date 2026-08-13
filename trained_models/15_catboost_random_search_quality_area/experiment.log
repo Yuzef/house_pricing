@@ -1,0 +1,10 @@
+2026-08-12 20:32:03 | INFO | Experiment started: 15_catboost_random_search_quality_area
+2026-08-12 20:32:03 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-12 20:43:12 | INFO | Metrics saved to: trained_models/15_catboost_random_search_quality_area/metrics.json
+2026-08-12 20:43:12 | INFO | CV RMSLE: 0.12005 +/- 0.00901
+2026-08-12 20:43:12 | INFO | CV results saved to: trained_models/15_catboost_random_search_quality_area/cv_results.csv
+2026-08-12 20:45:35 | INFO | Best parameters: {'model__regressor__random_strength': 1.0, 'model__regressor__learning_rate': 0.05, 'model__regressor__l2_leaf_reg': 3.0, 'model__regressor__iterations': 1000, 'model__regressor__depth': 5, 'model__regressor__bagging_temperature': 2.0}
+2026-08-12 20:45:35 | INFO | Best inner CV RMSLE: 0.11945
+2026-08-12 20:45:35 | INFO | Model saved to: trained_models/15_catboost_random_search_quality_area/model.joblib
+2026-08-12 20:45:35 | INFO | Submission saved to: trained_models/15_catboost_random_search_quality_area/submission.csv
+2026-08-12 20:45:35 | INFO | Experiment completed successfully

@@ -1,0 +1,110 @@
+general:
+  experiment_name: Boosting
+  seed: 1027309
+  task_type: regression
+paths:
+  train_csv: data_raw/train.csv
+  test_csv: data_raw/test.csv
+  trained_models: trained_models
+  plots_dir: plots
+target:
+  name: SalePrice
+  transform: log1p
+metric:
+  name: RMSLE
+  sklearn_scoring: neg_root_mean_squared_log_error
+id_column: Id
+validation:
+  strategy: stratified_kfold
+  n_splits: 5
+  n_bins: 10
+  shuffle: true
+  random_state: 1027309
+  n_jobs: 1
+  return_train_score: true
+preprocessing:
+  numerical_imputation:
+    strategy: median
+  categorical_imputation:
+    strategy: most_frequent
+  nominal_encoding:
+    type: one_hot
+    handle_unknown: ignore
+  ordinal_encoding:
+    enabled: false
+  scaling:
+    enabled: true
+feature_engineering:
+  age_features:
+    enabled: false
+  area_features:
+    enabled: false
+  bathroom_features:
+    enabled: false
+  quality_area_interaction:
+    enabled: true
+model:
+  name: 15_catboost_random_search_quality_area
+  type: catboost
+  params:
+    loss_function: RMSE
+    iterations: 1000
+    learning_rate: 0.05
+    depth: 6
+    l2_leaf_reg: 3.0
+    random_strength: 1.0
+    bootstrap_type: Bayesian
+    bagging_temperature: 1.0
+    random_seed: 1027309
+    thread_count: 1
+    verbose: false
+    allow_writing_files: false
+tuning:
+  enabled: true
+  search_type: random
+  n_iter: 30
+  random_state: 1027309
+  inner_cv:
+    n_splits: 3
+    shuffle: true
+    random_state: 1027309
+  n_jobs: 5
+  verbose: 1
+  param_space:
+    model__regressor__iterations:
+    - 500
+    - 1000
+    - 1500
+    - 2000
+    model__regressor__learning_rate:
+    - 0.01
+    - 0.03
+    - 0.05
+    - 0.1
+    model__regressor__depth:
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    model__regressor__l2_leaf_reg:
+    - 1.0
+    - 3.0
+    - 5.0
+    - 10.0
+    - 20.0
+    model__regressor__random_strength:
+    - 0.0
+    - 0.5
+    - 1.0
+    - 2.0
+    model__regressor__bagging_temperature:
+    - 0.0
+    - 0.5
+    - 1.0
+    - 2.0
+    - 5.0
+inference:
+  enabled: true
+  prediction_column: SalePrice
+  submission_filename: submission.csv

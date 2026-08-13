@@ -68,10 +68,10 @@ def save_metrics(
     
     return metrics_path
 
-def save_grid_search_results(grid_search, experiment_dir) -> Path:
-    results_path = experiment_dir / "grid_search_results.csv"
+def save_search_results(search, experiment_dir) -> Path:
+    results_path = experiment_dir / "search_results.csv"
 
-    pd.DataFrame(grid_search.cv_results_).to_csv(
+    pd.DataFrame(search.cv_results_).to_csv(
         results_path,
         index=False
         )

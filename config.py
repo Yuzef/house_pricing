@@ -2,7 +2,7 @@ from omegaconf import OmegaConf
 
 config_dict = {
     'general': {
-        "experiment_name": "Baseline",
+        "experiment_name": "Boosting",
         "seed": 0xFACED,
         "task_type": "regression" 
     },
@@ -78,27 +78,33 @@ config_dict = {
     },
 
     "model": {
-        "name": "14_random_forest_refined_grid_quality_area",
-        "type": "random_forest",
+        "name": "15_catboost_random_search_quality_area",
+        "type": "catboost",
 
         "params": {
-            "n_estimators": 500,
-            "criterion": "squared_error",
-            "max_depth": None,
-            "min_samples_split": 2,
-            "min_samples_leaf": 1,
-            "max_features": 0.5,
-            "bootstrap": True,
-            "n_jobs": 1,
-            "random_state": "${general.seed}",
+            "loss_function": "RMSE",
+            "iterations": 1000,
+            "learning_rate": 0.05,
+            "depth": 6,
+            "l2_leaf_reg": 3.0,
+            "random_strength": 1.0,
+            "bootstrap_type": "Bayesian",
+            "bagging_temperature": 1.0,
+            "random_seed": "${general.seed}",
+            "thread_count": 1,
+            "verbose": False,
+            "allow_writing_files": False,
         },
     },
 
     "tuning": {
         "enabled": True,
+        "search_type": "random",
+        "n_iter": 30,
+        "random_state": "${general.seed}",
 
         "inner_cv": {
-            "n_splits": 5,
+            "n_splits": 3,
             "shuffle": True,
             "random_state": "${general.seed}",
         },
@@ -106,19 +112,50 @@ config_dict = {
         "n_jobs": 5,
         "verbose": 1,
 
-        "param_grid": {
-            "model__regressor__max_features": [
-                0.2,
-                0.3,
-                0.4,
-                0.5,
-                0.6,
+        "param_space": {
+            "model__regressor__iterations": [
+                500,
+                1000,
+                1500,
+                2000,
             ],
 
-            "model__regressor__min_samples_leaf": [
-                1,
-                2,
-                3,
+            "model__regressor__learning_rate": [
+                0.01,
+                0.03,
+                0.05,
+                0.1,
+            ],
+
+            "model__regressor__depth": [
+                4,
+                5,
+                6,
+                7,
+                8,
+            ],
+
+            "model__regressor__l2_leaf_reg": [
+                1.0,
+                3.0,
+                5.0,
+                10.0,
+                20.0,
+            ],
+
+            "model__regressor__random_strength": [
+                0.0,
+                0.5,
+                1.0,
+                2.0,
+            ],
+
+            "model__regressor__bagging_temperature": [
+                0.0,
+                0.5,
+                1.0,
+                2.0,
+                5.0,
             ],
         },
     },

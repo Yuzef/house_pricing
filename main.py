@@ -8,7 +8,7 @@ from utils.preprocessing import build_preprocessor
 from utils.feature_engineering import build_feature_engineer
 
 from utils.validation import run_cross_validation
-from utils.model_selection import build_grid_search
+from utils.model_selection import build_model_search
 
 from utils.inference import create_submission
 
@@ -20,7 +20,7 @@ from utils.experiment_artifacts import (
 from utils.experiment_logging import (
     save_best_params,
     save_cv_results,
-    save_grid_search_results,
+    save_search_results,
     save_metrics,
     setup_experiment_logger,
 )
@@ -66,7 +66,7 @@ def main() -> None:
     )
 
     if config.tuning.enabled:
-        estimator_for_cv = build_grid_search(
+        estimator_for_cv = build_model_search(
             estimator=pipeline,
             cfg_tuning=config.tuning,
             cfg_metric=config.metric
@@ -120,34 +120,34 @@ def main() -> None:
     # Исходный объект pipeline после CV
     # не становится финальной обученной моделью.
     if config.tuning.enabled:
-        grid_search = build_grid_search(
+        model_search = build_model_search(
             estimator=pipeline,
             cfg_tuning=config.tuning,
             cfg_metric=config.metric
         )
 
-        grid_search.fit(X_train, y_train)
+        model_search.fit(X_train, y_train)
 
-        grid_results_path = save_grid_search_results(
-            grid_search=grid_search,
+        search_results_path = save_search_results(
+            search=model_search,
             experiment_dir=experiment_dir
         )
 
         best_params_path = save_best_params(
-            best_params=grid_search.best_params_,
+            best_params=model_search.best_params_,
             experiment_dir=experiment_dir
         )
 
-        final_pipeline = grid_search.best_estimator_
+        final_pipeline = model_search.best_estimator_
 
         logger.info(
             "Best parameters: %s",
-            grid_search.best_params_
+            model_search.best_params_
             )
 
         logger.info(
             "Best inner CV RMSLE: %.5f",
-            -grid_search.best_score_,
+            -model_search.best_score_,
         )
     
     else:
