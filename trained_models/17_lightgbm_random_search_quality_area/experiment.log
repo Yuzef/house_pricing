@@ -1,0 +1,10 @@
+2026-08-13 14:56:59 | INFO | Experiment started: 17_lightgbm_random_search_quality_area
+2026-08-13 14:56:59 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-13 14:57:39 | INFO | Metrics saved to: trained_models/17_lightgbm_random_search_quality_area/metrics.json
+2026-08-13 14:57:39 | INFO | CV RMSLE: 0.12472 +/- 0.00998
+2026-08-13 14:57:39 | INFO | CV results saved to: trained_models/17_lightgbm_random_search_quality_area/cv_results.csv
+2026-08-13 14:57:48 | INFO | Best parameters: {'model__regressor__subsample': 0.7, 'model__regressor__reg_lambda': 0.0, 'model__regressor__reg_alpha': 0.0, 'model__regressor__num_leaves': 31, 'model__regressor__n_estimators': 600, 'model__regressor__min_child_samples': 5, 'model__regressor__max_depth': 10, 'model__regressor__learning_rate': 0.05, 'model__regressor__colsample_bytree': 0.5}
+2026-08-13 14:57:48 | INFO | Best inner CV RMSLE: 0.12616
+2026-08-13 14:57:48 | INFO | Model saved to: trained_models/17_lightgbm_random_search_quality_area/model.joblib
+2026-08-13 14:57:48 | INFO | Submission saved to: trained_models/17_lightgbm_random_search_quality_area/submission.csv
+2026-08-13 14:57:48 | INFO | Experiment completed successfully

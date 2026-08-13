@@ -45,7 +45,7 @@ config_dict = {
         },
 
         "nominal_encoding": {
-            "type": "catboost_native", # catboost.
+            "type": "one_hot", # catboost_native or one_hot.
             "handle_unknown": "ignore",
         },
 
@@ -78,27 +78,31 @@ config_dict = {
     },
 
     "model": {
-        "name": "16_catboost_native_cat_qual_area",
-        "type": "catboost",
+        "name": "18_xgboost_random_search_quality_area",
+        "type": "xgboost",
 
         "params": {
-            "loss_function": "RMSE",
-            "iterations": 1000,
+            "objective": "reg:squarederror",
+            "eval_metric": "rmse",
+            "booster": "gbtree",
+            "tree_method": "hist",
+            "n_estimators": 1000,
             "learning_rate": 0.05,
-            "depth": 5,
-            "l2_leaf_reg": 3.0,
-            "random_strength": 1.0,
-            "bootstrap_type": "Bayesian",
-            "bagging_temperature": 2.0,
-            "random_seed": "${general.seed}",
-            "thread_count": 1,
-            "verbose": False,
-            "allow_writing_files": False,
+            "max_depth": 6,
+            "min_child_weight": 1.0,
+            "gamma": 0.0,
+            "subsample": 0.8,
+            "colsample_bytree": 0.8,
+            "reg_alpha": 0.0,
+            "reg_lambda": 1.0,
+            "random_state": "${general.seed}",
+            "n_jobs": 1,
+            "verbosity": 0,
         },
     },
 
     "tuning": {
-        "enabled": False, # Отключаем подбор для сравнения с 15 экспериментом.
+        "enabled": True,
         "search_type": "random",
         "n_iter": 30,
         "random_state": "${general.seed}",
@@ -113,11 +117,11 @@ config_dict = {
         "verbose": 1,
 
         "param_space": {
-            "model__regressor__iterations": [
-                500,
+            "model__regressor__n_estimators": [
+                300,
+                600,
                 1000,
                 1500,
-                2000,
             ],
 
             "model__regressor__learning_rate": [
@@ -127,35 +131,55 @@ config_dict = {
                 0.1,
             ],
 
-            "model__regressor__depth": [
+            "model__regressor__max_depth": [
+                2,
+                3,
                 4,
-                5,
                 6,
-                7,
                 8,
             ],
 
-            "model__regressor__l2_leaf_reg": [
+            "model__regressor__min_child_weight": [
                 1.0,
                 3.0,
                 5.0,
                 10.0,
-                20.0,
             ],
 
-            "model__regressor__random_strength": [
+            "model__regressor__gamma": [
                 0.0,
-                0.5,
-                1.0,
-                2.0,
+                0.01,
+                0.05,
+                0.1,
             ],
 
-            "model__regressor__bagging_temperature": [
-                0.0,
-                0.5,
+            "model__regressor__subsample": [
+                0.6,
+                0.8,
                 1.0,
-                2.0,
+            ],
+
+            "model__regressor__colsample_bytree": [
+                0.5,
+                0.7,
+                0.9,
+                1.0,
+            ],
+
+            "model__regressor__reg_alpha": [
+                0.0,
+                0.001,
+                0.01,
+                0.1,
+                1.0,
+            ],
+
+            "model__regressor__reg_lambda": [
+                0.1,
+                1.0,
                 5.0,
+                10.0,
+                20.0,
             ],
         },
     },
