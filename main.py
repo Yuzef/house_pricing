@@ -53,9 +53,27 @@ def main() -> None:
 
     feature_engineer = build_feature_engineer(config.feature_engineering)
 
+    encoding_type = str(config.preprocessing.nominal_encoding.type)
+
+    if encoding_type == "catboost_native":
+        if str(config.model.type) != "catboost":
+            raise ValueError(
+                "catboost_native encoding can only "
+                "be used with the CatBoost model."
+            )
+        
+        cat_features = tuple(
+            X_train.select_dtypes(
+                include=["object", "category"]
+            ).columns
+        )
+    
+    else:
+        cat_features = None
+
     preprocessor = build_preprocessor(config.preprocessing)
     
-    model = get_model_from_cfg(config.model)
+    model = get_model_from_cfg(config.model, cat_features=cat_features)
 
     pipeline = Pipeline(
         steps=[

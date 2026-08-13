@@ -19,7 +19,7 @@ from catboost import CatBoostRegressor
 from lightgbm import LGBMRegressor
 from xgboost import XGBRegressor
 
-def get_model_from_cfg(model_cfg):
+def get_model_from_cfg(model_cfg, cat_features=None):
     model_type = str(model_cfg.type)
 
     model_params = OmegaConf.to_container(
@@ -64,8 +64,13 @@ def get_model_from_cfg(model_cfg):
         )
     
     elif model_type == "catboost":
+        catboost_params = dict(model_params)
+
+        if cat_features is not None:
+            catboost_params["cat_features"] = tuple(cat_features)
+
         experiment_model = CatBoostRegressor(
-            **model_params
+            **catboost_params
         )
 
     elif model_type == "lightgbm":

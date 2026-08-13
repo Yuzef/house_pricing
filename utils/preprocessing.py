@@ -67,12 +67,29 @@ def build_preprocessor(cfg_preprocessing) -> ColumnTransformer:
 #                   ├── OneHotEncoder
 # остальные ────────┘
 
+    encoding_type = str(cfg_preprocessing.nominal_encoding.type)
+
+    if (
+        encoding_type == "catboost_native"
+        and cfg_preprocessing.ordinal_encoding.enabled
+    ):
+        raise ValueError(
+            "Ordinal encoding must be disabled "
+            "when CatBoost native categories are enabled."
+        )
+
+
+
     # pipeline для числовых признаков.
     numerical_steps = [
         (
             "imputer", # имя шага. Filling missing value.
             SimpleImputer(
                 strategy=(cfg_preprocessing.numerical_imputation.strategy),
+                keep_empty_features=True
+                # не позволяет sklearn удалить колонку, если внутри какого-либо
+                # CV-fold она окажется полностью пустой.
+                # Для CatBoost важно, чтобы состав колонок оставался одинаковым.
             ),
         ),
     ]
@@ -84,18 +101,22 @@ def build_preprocessor(cfg_preprocessing) -> ColumnTransformer:
         steps=numerical_steps
     )
 
-    categorical_pipeline = Pipeline(
-        steps=[
-            (
-                "imputer",
-                SimpleImputer(
-                    strategy=(
-                        cfg_preprocessing
-                        .categorical_imputation
-                        .strategy
-                    ),
+    categorical_steps = [
+        (
+            "imputer",
+            SimpleImputer(
+                strategy=(
+                    cfg_preprocessing
+                    .categorical_imputation
+                    .strategy
                 ),
+                keep_empty_features=True
             ),
+        )
+    ]
+
+    if encoding_type == "one_hot":
+        categorical_steps.append(
             (
                 "encoder",
                 OneHotEncoder(
@@ -103,10 +124,20 @@ def build_preprocessor(cfg_preprocessing) -> ColumnTransformer:
                         cfg_preprocessing.nominal_encoding.handle_unknown
                     ),
                     sparse_output=True,
-                ),
-            ),
-        ]
-    )
+                )
+            )
+        )
+    
+    elif encoding_type == "catboost_native":
+        pass
+
+    else:
+        raise ValueError(
+            f"Unknown nominal encoding type: "
+            f"{encoding_type}"
+        )
+    
+    categorical_pipeline = Pipeline(steps=categorical_steps)
 
     ordinal_steps = [
         (
@@ -175,9 +206,14 @@ def build_preprocessor(cfg_preprocessing) -> ColumnTransformer:
         )
     )
 
-    return ColumnTransformer(
+    preprocessor = ColumnTransformer(
         transformers=transformers,
         remainder="drop", # все колонки, которые не попали ни в один selector, удалить.
         verbose_feature_names_out=False, # не добавлять numerical__ categorical__
                                          # к названиями колонок.
     )
+
+    if encoding_type == "catboost_native":
+        preprocessor.set_output(transform="pandas")
+
+    return preprocessor

@@ -45,12 +45,12 @@ config_dict = {
         },
 
         "nominal_encoding": {
-            "type": "one_hot",
+            "type": "catboost_native", # catboost.
             "handle_unknown": "ignore",
         },
 
         "ordinal_encoding": {
-            "enabled": False,
+            "enabled": False, # False for native catboost.
         },
 
         "scaling": {
@@ -78,18 +78,18 @@ config_dict = {
     },
 
     "model": {
-        "name": "15_catboost_random_search_quality_area",
+        "name": "16_catboost_native_cat_qual_area",
         "type": "catboost",
 
         "params": {
             "loss_function": "RMSE",
             "iterations": 1000,
             "learning_rate": 0.05,
-            "depth": 6,
+            "depth": 5,
             "l2_leaf_reg": 3.0,
             "random_strength": 1.0,
             "bootstrap_type": "Bayesian",
-            "bagging_temperature": 1.0,
+            "bagging_temperature": 2.0,
             "random_seed": "${general.seed}",
             "thread_count": 1,
             "verbose": False,
@@ -98,7 +98,7 @@ config_dict = {
     },
 
     "tuning": {
-        "enabled": True,
+        "enabled": False, # Отключаем подбор для сравнения с 15 экспериментом.
         "search_type": "random",
         "n_iter": 30,
         "random_state": "${general.seed}",
