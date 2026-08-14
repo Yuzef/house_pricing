@@ -47,6 +47,7 @@ config_dict = {
         "nominal_encoding": {
             "type": "one_hot", # catboost_native or one_hot.
             "handle_unknown": "ignore",
+            "sparse_output": False # False for DL pipeline.
         },
 
         "ordinal_encoding": {

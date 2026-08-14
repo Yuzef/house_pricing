@@ -68,6 +68,11 @@ def build_preprocessor(cfg_preprocessing) -> ColumnTransformer:
 # остальные ────────┘
 
     encoding_type = str(cfg_preprocessing.nominal_encoding.type)
+    sparse_output = bool(
+        cfg_preprocessing
+        .nominal_encoding
+        .get("sparse_output", True)
+    )
 
     if (
         encoding_type == "catboost_native"
@@ -123,7 +128,7 @@ def build_preprocessor(cfg_preprocessing) -> ColumnTransformer:
                     handle_unknown=(
                         cfg_preprocessing.nominal_encoding.handle_unknown
                     ),
-                    sparse_output=True,
+                    sparse_output=sparse_output,
                 )
             )
         )
