@@ -124,6 +124,8 @@ def build_train_loader(
 
     dataset = TensorDataset(feature_tensor, target_tensor)
 
+    # Генератор случайных чисел,
+    # фиксируем порядок перемешивания для воспроизводимости.
     generator = torch.Generator()
     generator.manual_seed(seed)
 
