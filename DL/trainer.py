@@ -103,6 +103,34 @@ def fit_model(
     initial_best_epoch=None,
     initial_history=None,
 ):
+    """
+                    fit_model
+                        │
+                        ▼
+                train_one_epoch
+                        │
+                        ▼
+                evaluate_log_rmse
+                        │
+                        ▼
+                valid_rmsle
+                        │
+            ┌──────────┴──────────┐
+            │                     │
+        normal training        Optuna trial
+            │                     │
+            │               trial.report()
+            │                     │
+            │              should_prune()?
+            │                /          \
+            │              no            yes
+            │              │              │
+            │          next epoch    TrialPruned
+            │                             │
+            │                       следующий trial
+            ▼
+        next epoch
+    """
     criterion = nn.MSELoss()
 
     best_score = initial_best_score
@@ -177,9 +205,9 @@ def fit_model(
                 trial.set_user_attr("best_epoch", best_epoch)
 
                 raise optuna.TrialPruned()
-            
-            
-        
+
+
+               
     return {
         "best_valid_rmsle": (
             None
