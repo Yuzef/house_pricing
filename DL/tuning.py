@@ -32,59 +32,31 @@ def make_objective(
 
         hidden_dim = trial.suggest_categorical(
             "hidden_dim",
-            list(
-                config.optuna
-                .search_space
-                .hidden_dim
-            ),
+            list(config.optuna.search_space.hidden_dim)
         )
 
         activation = trial.suggest_categorical(
             "activation",
-            list(
-                config.optuna
-                .search_space
-                .activation
-            ),
+            list(config.optuna.search_space.activation),
         )
 
         batch_size = trial.suggest_categorical(
             "batch_size",
-            list(
-                config.optuna
-                .search_space
-                .batch_size
-            ),
+            list(config.optuna.search_space.batch_size)
         )
 
         learning_rate = trial.suggest_float(
             "learning_rate",
-            low=float(
-                config.optuna
-                .search_space
-                .learning_rate.low
-            ),
-            high=float(
-                config.optuna
-                .search_space
-                .learning_rate.high
-            ),
-            log=True,
+            low=float(config.optuna.search_space.learning_rate.low),
+            high=float(config.optuna.search_space.learning_rate.high),
+            log=bool(config.optuna.search_space.learning_rate.log)
         )
 
         weight_decay = trial.suggest_float(
             "weight_decay",
-            low=float(
-                config.optuna
-                .search_space
-                .weight_decay.low
-            ),
-            high=float(
-                config.optuna
-                .search_space
-                .weight_decay.high
-            ),
-            log=True,
+            low=float(config.optuna.search_space.weight_decay.low),
+            high=float(config.optuna.search_space.weight_decay.high),
+            log=bool(config.optuna.search_space.weight_decay.log)
         )
     
         train_loader, generator = build_train_loader(
@@ -94,7 +66,8 @@ def make_objective(
             shuffle=True,
             seed=seed,
             num_workers=int(config.dl.training.num_workers),
-            pin_memory=bool(config.dl.training.pin_memory)
+            pin_memory=bool(config.dl.training.pin_memory),
+            drop_last=bool(config.dl.training.drop_last)
         )
 
         valid_loader, _ = build_train_loader(
@@ -104,7 +77,8 @@ def make_objective(
             shuffle=False,
             seed=seed,
             num_workers=int(config.dl.training.num_workers),
-            pin_memory=bool(config.dl.training.pin_memory)
+            pin_memory=bool(config.dl.training.pin_memory),
+            drop_last = False
         )
 
         model_params = {
@@ -162,7 +136,7 @@ def run_optuna_study(
 
     database_path = (optuna_dir / "study.db").resolve()
 
-    storage_url = f"sqlite: ///{database_path}"
+    storage_url = f"sqlite:///{database_path}"
 
     sampler = optuna.samplers.TPESampler(seed=int(config.optuna.sampler.seed))
 

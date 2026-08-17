@@ -93,9 +93,10 @@ config_dict = {
             "max_epochs": 300,
             "device": "auto",
             "num_workers": 0,
-            "pin_memore": False,
+            "pin_memory": False,
+            "drop_last": False,
             "gradient_clip_norm": 1.0,
-            "mixed_precision": False,
+            "mixed_precision": False
         }
     },
 
@@ -148,7 +149,7 @@ config_dict = {
                 "log": True,
             },
         }
-    }
+    },
    
     #     "scheduler": {
     #         "enabled": True,

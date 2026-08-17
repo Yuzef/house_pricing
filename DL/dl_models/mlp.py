@@ -7,7 +7,7 @@ from torch import nn
 
 def get_activation(name: str) -> nn.Module:
     activation_classes = {
-        "relu": nn.Relu,
+        "relu": nn.ReLU,
         "gelu": nn.GELU,
         "silu": nn.SiLU
     }
@@ -29,7 +29,7 @@ class HousePriceMLP(nn.Module):
         hidden_dim: int,
         activation: str
     ):
-        super.__init__() 
+        super().__init__() 
 
         if input_dim < 1:
             raise ValueError("input_dim must be positive.")

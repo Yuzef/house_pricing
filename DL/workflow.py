@@ -3,7 +3,7 @@ from pathlib import Path
 import joblib
 import numpy as np
 import torch
-from torch.cpu import is_available
+
 from torch.optim import AdamW
 
 from DL.checkpoints import (
@@ -114,11 +114,14 @@ def run_dl_experiment(
             shuffle=True,
             seed=seed,
             num_workers=int(config.dl.training.num_workers),
-            pin_memory=bool(config.dl.training.pin_memory)
+            pin_memory=bool(config.dl.training.pin_memory),
+            drop_last=bool(config.dl.training.drop_last)
         )
     )
 
     # Новая финальная модель.
+    seed_everything(seed)
+    
     model_params = {
         "input_dim": int(X_full.shape[1]),
         "hidden_dim": int(best_params["hidden_dim"]),

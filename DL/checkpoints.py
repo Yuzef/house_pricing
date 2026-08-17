@@ -3,8 +3,6 @@
 from pathlib import Path
 
 import torch
-from torch.cpu import is_available
-from torch.utils.data import dataloader
 
 def build_checkpoint(
     *, # все аргументы после * разрешено передавать только по имени.
@@ -72,7 +70,7 @@ def save_checkpoint(checkpoint: dict, path: Path) -> Path:
     """
     path.parent.mkdir(parents=True, exist_ok=True)
     
-    temporary_path = path.with_suffix(path.with_suffix + ".tmp")
+    temporary_path = path.with_suffix(path.suffix + ".tmp")
 
     torch.save(checkpoint, temporary_path)
 
@@ -100,15 +98,15 @@ def restore_training_state(
 
     if (
         scheduler is not None
-        and ["scheduler_state_dict"] is not None
+        and  checkpoint["scheduler_state_dict"] is not None
     ):
         scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
 
     if (
         scaler is not None
-        and checkpoint["scheduler_state_dict"] is not None
+        and checkpoint["scaler_state_dict"] is not None
     ):
-        scaler.load_state_dict(checkpoint["scheduler_state_dict"])
+        scaler.load_state_dict(checkpoint["scaler_state_dict"])
 
     torch.set_rng_state(checkpoint["torch_rng_state"])
 

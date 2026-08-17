@@ -1,9 +1,7 @@
 import math
 import optuna
-from operator import is_
 from pathlib import Path
 
-from sklearn.metrics import mean_squared_error
 import torch
 from torch import nn
 
@@ -175,24 +173,24 @@ def fit_model(
             best_score = valid_rmsle
             best_epoch = epoch
 
-        checkpoint = build_checkpoint(
-           model=model,
-           optimizer=optimizer,
-           epoch=epoch,
-           global_step=global_step,
-           model_params=model_params,
-           optimizer_params=optimizer_params,
-           best_valid_rmsle=(
-            None
-            if math.isinf(best_score)
-            else best_score
-           ),
-           best_epoch=best_epoch,
-           history=history,
-           dataloader_generator=dataloader_generator
-        )
-
         if checkpoint_dir is not None:
+            checkpoint = build_checkpoint(
+            model=model,
+            optimizer=optimizer,
+            epoch=epoch,
+            global_step=global_step,
+            model_params=model_params,
+            optimizer_params=optimizer_params,
+            best_valid_rmsle=(
+                None
+                if math.isinf(best_score)
+                else best_score
+            ),
+            best_epoch=best_epoch,
+            history=history,
+            dataloader_generator=dataloader_generator
+            )
+
             save_checkpoint(checkpoint, checkpoint_dir / "last.pt")
 
             if is_best:

@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from sympy.logic.inference import valid
 import torch
 
 from sklearn.pipeline import Pipeline
