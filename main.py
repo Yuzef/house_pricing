@@ -11,6 +11,7 @@ from utils.validation import run_cross_validation
 from utils.model_selection import build_model_search
 
 from utils.inference import create_submission
+from DL.workflow import run_dl_experiment
 
 from utils.experiment_artifacts import (
     prepare_experiment_dir,
@@ -51,6 +52,25 @@ def main() -> None:
     X_test = test_df.drop(columns=id_column)
     test_ids = test_df[id_column].copy()
 
+    # Развилка.
+
+    # DL ветка.
+    if str(config.model.type) == "DL":
+        run_dl_experiment(
+            config=config,
+            experiment_dir=experiment_dir,
+            logger=logger,
+            X_train=X_train,
+            y_train=y_train,
+            X_test=X_test,
+            test_ids=test_ids
+        )
+
+        logger.info("DL experiment comleted successfully")
+
+        return
+    
+    # Классическая sklearn ветка.
     feature_engineer = build_feature_engineer(config.feature_engineering)
 
     encoding_type = str(config.preprocessing.nominal_encoding.type)
