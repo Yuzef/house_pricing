@@ -2,7 +2,7 @@ from omegaconf import OmegaConf
 
 config_dict = {
     'general': {
-        "experiment_name": "Boosting",
+        "experiment_name": "DL_MLP_optuna",
         "seed": 0xFACED,
         "task_type": "regression" 
     },
@@ -88,10 +88,94 @@ config_dict = {
         },
     },
 
+    # sklearn tuning
+    "tuning": {
+        "enabled": False,
+        "search_type": "random",
+        "n_iter": 30,
+        "random_state": "${general.seed}",
+
+        "inner_cv": {
+            "n_splits": 3,
+            "shuffle": True,
+            "random_state": "${general.seed}",
+        },
+
+        "n_jobs": 5,
+        "verbose": 1,
+
+        "param_space": {
+            "model__regressor__n_estimators": [
+                300,
+                600,
+                1000,
+                1500,
+            ],
+
+            "model__regressor__learning_rate": [
+                0.01,
+                0.03,
+                0.05,
+                0.1,
+            ],
+
+            "model__regressor__max_depth": [
+                2,
+                3,
+                4,
+                6,
+                8,
+            ],
+
+            "model__regressor__min_child_weight": [
+                1.0,
+                3.0,
+                5.0,
+                10.0,
+            ],
+
+            "model__regressor__gamma": [
+                0.0,
+                0.01,
+                0.05,
+                0.1,
+            ],
+
+            "model__regressor__subsample": [
+                0.6,
+                0.8,
+                1.0,
+            ],
+
+            "model__regressor__colsample_bytree": [
+                0.5,
+                0.7,
+                0.9,
+                1.0,
+            ],
+
+            "model__regressor__reg_alpha": [
+                0.0,
+                0.001,
+                0.01,
+                0.1,
+                1.0,
+            ],
+
+            "model__regressor__reg_lambda": [
+                0.1,
+                1.0,
+                5.0,
+                10.0,
+                20.0,
+            ],
+        },
+    },
+
     "dl": {
         "training": {
-            "max_epochs": 300,
-            "device": "auto",
+            "max_epochs": 100,
+            "device": "cpu", # auto, mps not stable for AdamW
             "num_workers": 0,
             "pin_memory": False,
             "drop_last": False,
@@ -102,9 +186,17 @@ config_dict = {
 
     "optuna": {
         "study_name": "${model.name}",
-        "target_n_trials": 30,
+        "target_n_trials": 5,
         "timeout_seconds": None,
         "n_jobs": 1,
+
+        "inner_validation": {
+            "strategy": "stratified_kfold",
+            "n_splits": 3,
+            "n_bins": 10,
+            "shuffle": True,
+            "random_state": "${general.seed}"
+        },
 
         "sampler": {
             "name": "tpe",
@@ -113,8 +205,8 @@ config_dict = {
 
         "pruner": {
             "name": "median",
-            "n_startup_trials": 5,
-            "n_warmup_steps": 20
+            "n_startup_trials": 2,
+            "n_warmup_steps": 5
         },
 
         "search_space": {

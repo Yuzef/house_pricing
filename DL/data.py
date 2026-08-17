@@ -65,22 +65,14 @@ def transform_target(target: pd.Series) -> np.ndarray:
         copy=False
     )
 
-def prepare_tuning_split(
+def prepare_fold(
+    *,
     X: pd.DataFrame,
     y: pd.Series,
+    train_indices,
+    valid_indices,
     config
 ):
-    """
-    Для tuning используется первый из 5 folds.
-    """
-    cv_splits = build_cv_splits(
-        X=X,
-        y=y,
-        cfg_validation=config.validation
-    )
-
-    train_indices, valid_indices = cv_splits[0]
-
     feature_pipeline = build_dl_feature_pipeline(config)
 
     # Разделение исходного X согласно индексам, которые дал CV.
@@ -93,10 +85,8 @@ def prepare_tuning_split(
     X_train = to_float32_array(X_train)
     X_valid = to_float32_array(X_valid)
 
-    y_log = transform_target(y)
-
-    y_train = y_log[train_indices]
-    y_valid = y_log[valid_indices]
+    y_train = transform_target(y.iloc[train_indices])
+    y_valid = transform_target(y.iloc[valid_indices])
 
     return {
         "X_train": X_train,

@@ -1,0 +1,12 @@
+{
+  "trial_number": 1,
+  "value": 0.12732938795613286,
+  "params": {
+    "hidden_dim": 64,
+    "activation": "relu",
+    "batch_size": 128,
+    "learning_rate": 0.0029252289289933005,
+    "weight_decay": 4.838820896628907e-06
+  },
+  "best_epoch": 32
+}

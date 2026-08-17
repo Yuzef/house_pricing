@@ -4,6 +4,7 @@ from pathlib import Path
 
 import numpy as np
 import optuna
+from pandas.core.indexers import validate_indices
 import torch
 from optuna.trial import TrialState
 from torch.optim import AdamW
@@ -22,13 +23,27 @@ def seed_everything(seed: int) -> None:
 
 def make_objective(
     *,
-    prepared_data: dict,
+    X,
+    y,
+    cv_splits,
     config,
     device,
 ):
     def objective(trial):
-        seed = int(config.general.seed)
-        seed_everything(seed)
+        fold_scores = []
+        fold_epochs = []
+
+        for fold_index, (train_indices, valid_indices) in enumerate(cv_splits):
+            fold_seed = int(config.general.seed) + fold_index
+            seed_everything(fold_seed)
+
+            prepared_data = prepare_fold(
+                X=X,
+                y=y,
+                train_indices=train_indices,
+                valid_indices=valid_indices,
+                config=config,
+            )
 
         hidden_dim = trial.suggest_categorical(
             "hidden_dim",
