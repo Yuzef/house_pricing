@@ -1,15 +1,18 @@
 import json
 import random
+import math
 from pathlib import Path
 
 import numpy as np
 import optuna
-from pandas.core.indexers import validate_indices
 import torch
 from optuna.trial import TrialState
 from torch.optim import AdamW
 
-from DL.data import build_train_loader
+from DL.data import (
+    build_train_loader,
+    prepare_fold,
+)
 from DL.dl_models.mlp import HousePriceMLP
 from DL.trainer import fit_model
 
@@ -30,21 +33,10 @@ def make_objective(
     device,
 ):
     def objective(trial):
-        fold_scores = []
-        fold_epochs = []
 
-        for fold_index, (train_indices, valid_indices) in enumerate(cv_splits):
-            fold_seed = int(config.general.seed) + fold_index
-            seed_everything(fold_seed)
+        base_seed = int(config.general.seed)
 
-            prepared_data = prepare_fold(
-                X=X,
-                y=y,
-                train_indices=train_indices,
-                valid_indices=valid_indices,
-                config=config,
-            )
-
+        # Гиперпараметры выбираются один раз на trial.
         hidden_dim = trial.suggest_categorical(
             "hidden_dim",
             list(config.optuna.search_space.hidden_dim)
@@ -73,74 +65,124 @@ def make_objective(
             high=float(config.optuna.search_space.weight_decay.high),
             log=bool(config.optuna.search_space.weight_decay.log)
         )
+
+        fold_scores = []
+        fold_epochs = []
+
+        for fold_index, (train_indices, valid_indices) in enumerate(cv_splits):
+            fold_seed = base_seed + fold_index
+            seed_everything(fold_seed)
+
+            prepared_data = prepare_fold(
+                X=X,
+                y=y,
+                train_indices=train_indices,
+                valid_indices=valid_indices,
+                config=config,
+            )
     
-        train_loader, generator = build_train_loader(
-            X=prepared_data["X_train"],
-            y=prepared_data["y_train"],
-            batch_size=batch_size,
-            shuffle=True,
-            seed=seed,
-            num_workers=int(config.dl.training.num_workers),
-            pin_memory=bool(config.dl.training.pin_memory),
-            drop_last=bool(config.dl.training.drop_last)
-        )
+            train_loader, generator = build_train_loader(
+                X=prepared_data["X_train"],
+                y=prepared_data["y_train"],
+                batch_size=batch_size,
+                shuffle=True,
+                seed=fold_seed,
+                num_workers=int(config.dl.training.num_workers),
+                pin_memory=bool(config.dl.training.pin_memory),
+                drop_last=bool(config.dl.training.drop_last)
+            )
 
-        valid_loader, _ = build_train_loader(
-            X=prepared_data["X_valid"],
-            y=prepared_data["y_valid"],
-            batch_size=batch_size,
-            shuffle=False,
-            seed=seed,
-            num_workers=int(config.dl.training.num_workers),
-            pin_memory=bool(config.dl.training.pin_memory),
-            drop_last = False
-        )
+            valid_loader, _ = build_train_loader(
+                X=prepared_data["X_valid"],
+                y=prepared_data["y_valid"],
+                batch_size=batch_size,
+                shuffle=False,
+                seed=fold_seed,
+                num_workers=int(config.dl.training.num_workers),
+                pin_memory=bool(config.dl.training.pin_memory),
+                drop_last = False
+            )
 
-        model_params = {
-            "input_dim": int(prepared_data["X_train"].shape[1]),
-            "hidden_dim": int(hidden_dim),
-            "activation": str(activation)
-        }
+            model_params = {
+                "input_dim": int(prepared_data["X_train"].shape[1]),
+                "hidden_dim": int(hidden_dim),
+                "activation": str(activation)
+            }
 
-        model = HousePriceMLP(**model_params).to(device)
+            model = HousePriceMLP(**model_params).to(device)
 
-        optimizer_params = {
-            "lr": float(learning_rate),
-            "weight_decay": float(weight_decay)
-        }
+            optimizer_params = {
+                "lr": float(learning_rate),
+                "weight_decay": float(weight_decay)
+            }
 
-        optimizer = AdamW(
-            model.parameters(),
-            **optimizer_params
-        )
+            optimizer = AdamW(
+                model.parameters(),
+                **optimizer_params
+            )
 
-        # Запуск Trainer:
-        result = fit_model(
-            model=model,
-            train_loader=train_loader,
-            valid_loader=valid_loader,
-            optimizer=optimizer,
-            device=device,
-            max_epochs=int(config.dl.training.max_epochs),
-            model_params=model_params,
-            optimizer_params=optimizer_params,
-            gradient_clip_norm=float(
-                config.dl.training.gradient_clip_norm
-            ),
-            trial=trial,
-            checkpoint_dir=None,
-            dataloader_generator=generator
-        )
+            # Запуск Trainer:
+            result = fit_model(
+                model=model,
+                train_loader=train_loader,
+                valid_loader=valid_loader,
+                optimizer=optimizer,
+                device=device,
+                max_epochs=int(config.dl.training.max_epochs),
+                model_params=model_params,
+                optimizer_params=optimizer_params,
+                gradient_clip_norm=float(
+                    config.dl.training.gradient_clip_norm
+                ),
+                trial=None,
+                checkpoint_dir=None,
+                dataloader_generator=generator
+            )
 
-        trial.set_user_attr("best_epoch", result["best_epoch"])
+            score = result["best_valid_rmsle"]
+            best_epoch = result["best_epoch"]
 
-        return result["best_valid_rmsle"]
+            if (
+                score is None
+                or not math.isfinite(score)
+                or best_epoch is None
+            ):
+                raise FloatingPointError(
+                    f"Fold {fold_index} produced an invalid result: "
+                    f"score={score}, best_epoch={best_epoch}."
+                )
+            
+            fold_scores.append(float(score))
+            # best_epoch имеет нумерацию с нуля.
+            fold_epochs.append(int(best_epoch) + 1)
+
+            # Fold-level pruning
+            running_mean = float(np.mean(fold_scores))
+
+            trial.set_user_attr("fold_scores", list(fold_scores))
+            trial.set_user_attr("fold_epochs", list(fold_epochs))
+
+            trial.report(running_mean, step=fold_index)
+
+            if trial.should_prune():
+                raise optuna.TrialPruned()
+        
+        mean_score = float(np.mean(fold_scores))
+        recommended_epochs = int(round(np.median(fold_epochs)))
+
+        trial.set_user_attr("fold_scores", list(fold_scores))
+        trial.set_user_attr("fold_epochs", list(fold_epochs))
+        trial.set_user_attr("recommended_epochs", recommended_epochs)
+
+        return mean_score
     
     return objective
 
 def run_optuna_study(
     *,
-    prepared_data,
+    X,
+    y,
+    cv_splits,
     config,
     device,
     experiment_dir: Path,
@@ -181,9 +223,11 @@ def run_optuna_study(
     if remaining_trials > 0:
         study.optimize(
             func=make_objective(
-                prepared_data=prepared_data,
+                X=X,
+                y=y,
+                cv_splits=cv_splits,
                 config=config,
-                device=device
+                device=device,
             ),
             n_trials=remaining_trials,
             timeout=(
@@ -204,9 +248,9 @@ def run_optuna_study(
         "trial_number": study.best_trial.number,
         "value": study.best_value,
         "params": study.best_params,
-        "best_epoch": (
-            study.best_trial.user_attrs.get("best_epoch")
-        )
+        "fold_scores": study.best_trial.user_attrs.get("fold_scores"),
+        "fold_epochs": study.best_trial.user_attrs.get("fold_epochs"),
+        "recommended_epochs": study.best_trial.user_attrs.get("recommended_epochs")
     }
 
     with (optuna_dir / "best_params.json").open("w", encoding="utf-8") as file:

@@ -79,7 +79,7 @@ config_dict = {
     },
 
     "model": {
-        "name": "19_pytorch_mlp_optuna",
+        "name": "19_pytorch_mlp_cv_optuna",
         "type": "DL",
 
         "params": {
@@ -206,7 +206,7 @@ config_dict = {
         "pruner": {
             "name": "median",
             "n_startup_trials": 2,
-            "n_warmup_steps": 5
+            "n_warmup_steps": 1
         },
 
         "search_space": {

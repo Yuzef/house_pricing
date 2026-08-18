@@ -15,10 +15,12 @@ from DL.checkpoints import (
 from DL.data import (
     build_dl_feature_pipeline,
     build_train_loader,
-    prepare_tuning_split,
     to_float32_array,
     transform_target,
 )
+
+from utils.validation import build_cv_splits
+
 from DL.dl_models.mlp import HousePriceMLP
 from DL.inference import create_dl_submission
 from DL.trainer import fit_model
@@ -56,37 +58,50 @@ def run_dl_experiment(
 
     logger.info("PyTorch device: %s", device)
 
-    # Tuning data
-    prepared_data = prepare_tuning_split(
+    cv_inner_slits = build_cv_splits(
         X=X_train,
         y=y_train,
-        config=config
+        cfg_validation=config.optuna.inner_validation
     )
 
-    np.savez_compressed(
-        experiment_dir / "split_indices.npz",
-        train_indices=prepared_data["train_indices"],
-        valid_indices=prepared_data["valid_indices"]
-    )
+    # Сохранение индексов всех фолдов.
+    # Сборка словаря.
+    split_arrays = {}
+
+    for fold_index, (train_indices, valid_indices) in enumerate(cv_inner_slits):
+        fold_number = fold_index + 1
+        
+        split_arrays[f"fold_{fold_number}_train_indices"] = train_indices
+        split_arrays[f"fold_{fold_number}_valid_indices"] = valid_indices
+    
+    np.savez_compressed(experiment_dir / "split_indices.npz", ** split_arrays)
+
 
     # Optuna
     study = run_optuna_study(
-        prepared_data=prepared_data,
+        X=X_train,
+        y=y_train,
+        cv_splits=cv_inner_slits,
         config=config,
         device=device,
-        experiment_dir=experiment_dir
+        experiment_dir=experiment_dir,
     )
 
     best_params = dict(study.best_params)
 
-    best_epoch = study.best_trial.user_attrs.get("best_epoch")
+    recommended_epochs = study.best_trial.user_attrs.get("recommended_epochs")
 
-    if best_epoch is None:
+    if recommended_epochs is None:
         raise ValueError(
-            "Best trial does not contain best_epoch."
+            "Best trial does not contain recommended_epochs."
         )
 
-    final_epochs = int(best_epoch) + 1
+    final_epochs = int(recommended_epochs) + 1
+
+    if final_epochs < 1:
+        raise ValueError(
+            "recommended_epochs must be positive."
+        )
 
     # preprocessing на всём train.
     final_feature_pipeline = build_dl_feature_pipeline(config)

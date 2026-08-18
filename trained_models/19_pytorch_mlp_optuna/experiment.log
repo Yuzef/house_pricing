@@ -1,5 +1,0 @@
-2026-08-17 22:22:25 | INFO | Experiment started: 19_pytorch_mlp_optuna
-2026-08-17 22:22:25 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
-2026-08-17 22:22:25 | INFO | PyTorch device: cpu
-2026-08-17 22:22:31 | INFO | Submission saved to: trained_models/19_pytorch_mlp_optuna/submission.csv
-2026-08-17 22:22:31 | INFO | DL experiment comleted successfully
