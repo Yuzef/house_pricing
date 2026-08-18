@@ -79,7 +79,7 @@ config_dict = {
     },
 
     "model": {
-        "name": "19_pytorch_mlp_cv_optuna",
+        "name": "19_pytorch_mlp_nested_cv",
         "type": "DL",
 
         "params": {

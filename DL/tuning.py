@@ -239,10 +239,6 @@ def run_optuna_study(
             gc_after_trial=True
         )
 
-    if not complete_trials:
-        raise RuntimeError(
-            "Optuna study has no completed trials."
-        )
     
     study.trials_dataframe().to_csv(
         study_dir / "trials.csv",
@@ -256,7 +252,7 @@ def run_optuna_study(
 
     if not complete_trials:
         raise RuntimeError(
-            f"Optuna study {study_name!r} has no completed trials."
+            f"Optuna study {study_name} has no completed trials."
         )
 
     best_result = {

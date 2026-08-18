@@ -1,0 +1,22 @@
+{
+  "trial_number": 4,
+  "value": 0.1436594606108151,
+  "params": {
+    "hidden_dim": 32,
+    "activation": "gelu",
+    "batch_size": 32,
+    "learning_rate": 0.0006910069646256938,
+    "weight_decay": 3.5308579052359434e-07
+  },
+  "fold_scores": [
+    0.12270233760921724,
+    0.16588878311378763,
+    0.14238726110944044
+  ],
+  "fold_epochs": [
+    17,
+    21,
+    20
+  ],
+  "recommended_epochs": 20
+}

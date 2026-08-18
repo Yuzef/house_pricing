@@ -1,0 +1,19 @@
+2026-08-18 19:28:39 | INFO | Experiment started: 19_pytorch_mlp_nested_cv
+2026-08-18 19:28:39 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-18 19:28:39 | INFO | PyTorch device: cpu
+2026-08-18 19:28:39 | INFO | Outer fold 1/5 started
+2026-08-18 19:28:50 | INFO | Outer fold 1 RMSLE: 0.13577
+2026-08-18 19:28:50 | INFO | Outer fold 2/5 started
+2026-08-18 19:28:59 | INFO | Outer fold 2 RMSLE: 0.15945
+2026-08-18 19:28:59 | INFO | Outer fold 3/5 started
+2026-08-18 19:29:08 | INFO | Outer fold 3 RMSLE: 0.17317
+2026-08-18 19:29:08 | INFO | Outer fold 4/5 started
+2026-08-18 19:29:17 | INFO | Outer fold 4 RMSLE: 0.13612
+2026-08-18 19:29:17 | INFO | Outer fold 5/5 started
+2026-08-18 19:29:26 | INFO | Outer fold 5 RMSLE: 0.13585
+2026-08-18 19:29:26 | INFO | Nested outer CV RMSLE: 0.14807 +/- 0.01734
+2026-08-18 19:29:26 | INFO | Outer CV results saved to: trained_models/19_pytorch_mlp_nested_cv/cv_results.csv
+2026-08-18 19:29:26 | INFO | Nested CV metrics saved to: trained_models/19_pytorch_mlp_nested_cv/metrics.json
+2026-08-18 19:29:26 | INFO | Final Optuna study started
+2026-08-18 19:29:38 | INFO | Submission saved to: trained_models/19_pytorch_mlp_nested_cv/submission.csv
+2026-08-18 19:29:38 | INFO | DL experiment comleted successfully

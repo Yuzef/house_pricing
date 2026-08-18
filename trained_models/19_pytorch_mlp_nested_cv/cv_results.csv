@@ -1,0 +1,6 @@
+fold,validation_score,recommended_epochs,best_params,fit_time_seconds
+1,0.13577158083264218,24,"{""activation"": ""gelu"", ""batch_size"": 32, ""hidden_dim"": 32, ""learning_rate"": 0.0006910069646256938, ""weight_decay"": 3.5308579052359434e-07}",0.21826137509196997
+2,0.15944745970708815,27,"{""activation"": ""relu"", ""batch_size"": 32, ""hidden_dim"": 64, ""learning_rate"": 0.0005800205711012044, ""weight_decay"": 0.00011332919418280793}",0.2595934581477195
+3,0.17317277103389928,18,"{""activation"": ""relu"", ""batch_size"": 32, ""hidden_dim"": 64, ""learning_rate"": 0.0005800205711012044, ""weight_decay"": 0.00011332919418280793}",0.18068533297628164
+4,0.13611680452498137,20,"{""activation"": ""gelu"", ""batch_size"": 32, ""hidden_dim"": 32, ""learning_rate"": 0.0006910069646256938, ""weight_decay"": 3.5308579052359434e-07}",0.18167504109442234
+5,0.13584756975831544,28,"{""activation"": ""gelu"", ""batch_size"": 32, ""hidden_dim"": 32, ""learning_rate"": 0.0006910069646256938, ""weight_decay"": 3.5308579052359434e-07}",0.2546960001345724
