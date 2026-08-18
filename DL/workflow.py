@@ -20,7 +20,9 @@ from DL.data import (
 )
 
 from utils.validation import build_cv_splits
+from utils.experiment_artifacts import save_split_indices
 
+from DL.nested_CV import run_nested_cv
 from DL.dl_models.mlp import HousePriceMLP
 from DL.inference import create_dl_submission
 from DL.trainer import fit_model
@@ -58,7 +60,7 @@ def run_dl_experiment(
 
     logger.info("PyTorch device: %s", device)
 
-    cv_inner_slits = build_cv_splits(
+    cv_inner_splits = build_cv_splits(
         X=X_train,
         y=y_train,
         cfg_validation=config.optuna.inner_validation
@@ -68,20 +70,20 @@ def run_dl_experiment(
     # Сборка словаря.
     split_arrays = {}
 
-    for fold_index, (train_indices, valid_indices) in enumerate(cv_inner_slits):
+    for fold_index, (train_indices, valid_indices) in enumerate(cv_inner_splits):
         fold_number = fold_index + 1
         
         split_arrays[f"fold_{fold_number}_train_indices"] = train_indices
         split_arrays[f"fold_{fold_number}_valid_indices"] = valid_indices
     
-    np.savez_compressed(experiment_dir / "split_indices.npz", ** split_arrays)
+    np.savez_compressed(experiment_dir / "split_indices.npz", **split_arrays)
 
 
     # Optuna
     study = run_optuna_study(
         X=X_train,
         y=y_train,
-        cv_splits=cv_inner_slits,
+        cv_splits=cv_inner_splits,
         config=config,
         device=device,
         experiment_dir=experiment_dir,
@@ -96,7 +98,7 @@ def run_dl_experiment(
             "Best trial does not contain recommended_epochs."
         )
 
-    final_epochs = int(recommended_epochs) + 1
+    final_epochs = int(recommended_epochs)
 
     if final_epochs < 1:
         raise ValueError(

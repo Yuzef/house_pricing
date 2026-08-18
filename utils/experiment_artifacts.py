@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import numpy as np
 import joblib
 from omegaconf import DictConfig, OmegaConf
 from sklearn.base import BaseEstimator
@@ -33,3 +34,22 @@ def save_model(model, experiment_dir: Path) -> Path:
     )
 
     return model_path
+
+def save_split_indices(
+    *,
+    cv_splits,
+    output_path: Path,
+) -> Path:
+    split_arrays = {}
+
+    for fold_index, (train_indices, valid_indices) in enumerate(cv_splits):
+        fold_number = fold_index + 1
+
+        split_arrays[f"fold_{fold_number}_train_indices"] = train_indices
+        split_arrays[f"fold_{fold_number}_valid_indices"] = valid_indices
+    
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    np.savez_compressed(output_path, **split_arrays)
+
+    return output_path

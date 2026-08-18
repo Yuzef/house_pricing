@@ -7,7 +7,6 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from utils.feature_engineering import build_feature_engineer
 from utils.preprocessing import build_preprocessor
-from utils.validation import build_cv_splits
 
 def build_dl_feature_pipeline(config) -> Pipeline:
     """

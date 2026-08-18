@@ -185,13 +185,13 @@ def run_optuna_study(
     cv_splits,
     config,
     device,
-    experiment_dir: Path,
+    study_dir: Path,
+    study_name: str
 ):
-    optuna_dir = experiment_dir / "optuna"
 
-    optuna_dir.mkdir(parents=True, exist_ok=True)
+    study_dir.mkdir(parents=True, exist_ok=True)
 
-    database_path = (optuna_dir / "study.db").resolve()
+    database_path = (study_dir / "study.db").resolve()
 
     storage_url = f"sqlite:///{database_path}"
 
@@ -203,7 +203,7 @@ def run_optuna_study(
     )
 
     study = optuna.create_study(
-        study_name=str(config.optuna.study_name),
+        study_name=study_name,
         storage=storage_url,
         direction="minimize",
         sampler=sampler,
@@ -239,10 +239,30 @@ def run_optuna_study(
             gc_after_trial=True
         )
     
+    complete_trials = study.get_trials(
+        deepcopy=False,
+        states=(TrialState.COMPLETE,),
+    )
+
+    if not complete_trials:
+        raise RuntimeError(
+            "Optuna study has no completed trials."
+        )
+    
     study.trials_dataframe().to_csv(
-        optuna_dir / "trials.csv",
+        study_dir / "trials.csv",
         index=False
     )
+
+    complete_trials = study.get_trials(
+        deepcopy=False,
+        states=(TrialState.COMPLETE,),
+    )
+
+    if not complete_trials:
+        raise RuntimeError(
+            f"Optuna study {study_name!r} has no completed trials."
+        )
 
     best_result = {
         "trial_number": study.best_trial.number,
@@ -253,7 +273,7 @@ def run_optuna_study(
         "recommended_epochs": study.best_trial.user_attrs.get("recommended_epochs")
     }
 
-    with (optuna_dir / "best_params.json").open("w", encoding="utf-8") as file:
+    with (study_dir / "best_params.json").open("w", encoding="utf-8") as file:
         json.dump(
             best_result,
             file,
