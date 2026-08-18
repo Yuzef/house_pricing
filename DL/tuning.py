@@ -238,11 +238,6 @@ def run_optuna_study(
             n_jobs=int(config.optuna.n_jobs),
             gc_after_trial=True
         )
-    
-    complete_trials = study.get_trials(
-        deepcopy=False,
-        states=(TrialState.COMPLETE,),
-    )
 
     if not complete_trials:
         raise RuntimeError(

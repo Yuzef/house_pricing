@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import joblib
-import numpy as np
 import torch
 
 from torch.optim import AdamW
@@ -22,7 +21,7 @@ from DL.data import (
 from utils.validation import build_cv_splits
 from utils.experiment_artifacts import save_split_indices
 
-from DL.nested_CV import run_nested_cv
+from DL.nested_cv import run_nested_cv
 from DL.dl_models.mlp import HousePriceMLP
 from DL.inference import create_dl_submission
 from DL.trainer import fit_model
@@ -60,42 +59,55 @@ def run_dl_experiment(
 
     logger.info("PyTorch device: %s", device)
 
-    cv_inner_splits = build_cv_splits(
+    run_nested_cv(
+        X=X_train,
+        y=y_train,
+        config=config,
+        device=device,
+        experiment_dir=experiment_dir,
+        logger=logger,
+    )
+
+    final_inner_splits = build_cv_splits(
         X=X_train,
         y=y_train,
         cfg_validation=config.optuna.inner_validation
+    )
+
+    final_optuna_dir = (
+        experiment_dir / "final_optuna"
     )
 
     # Сохранение индексов всех фолдов.
     # Сборка словаря.
     split_arrays = {}
 
-    for fold_index, (train_indices, valid_indices) in enumerate(cv_inner_splits):
-        fold_number = fold_index + 1
-        
-        split_arrays[f"fold_{fold_number}_train_indices"] = train_indices
-        split_arrays[f"fold_{fold_number}_valid_indices"] = valid_indices
-    
-    np.savez_compressed(experiment_dir / "split_indices.npz", **split_arrays)
+    save_split_indices(
+        cv_splits=final_inner_splits,
+        output_path=final_optuna_dir / "split_indices.npz"
+    )
 
 
     # Optuna
-    study = run_optuna_study(
+    logger.info("Final Optuna study started")
+
+    final_study = run_optuna_study(
         X=X_train,
         y=y_train,
-        cv_splits=cv_inner_splits,
+        cv_splits=final_inner_splits,
         config=config,
         device=device,
-        experiment_dir=experiment_dir,
+        study_dir=final_optuna_dir,
+        study_name=f"{config.model.name}_final"
     )
 
-    best_params = dict(study.best_params)
+    best_params = dict(final_study.best_params)
 
-    recommended_epochs = study.best_trial.user_attrs.get("recommended_epochs")
+    recommended_epochs = final_study.best_trial.user_attrs.get("recommended_epochs")
 
     if recommended_epochs is None:
         raise ValueError(
-            "Best trial does not contain recommended_epochs."
+            "Final trial does not contain recommended_epochs."
         )
 
     final_epochs = int(recommended_epochs)
