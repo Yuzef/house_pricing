@@ -78,10 +78,6 @@ def run_dl_experiment(
         experiment_dir / "final_optuna"
     )
 
-    # Сохранение индексов всех фолдов.
-    # Сборка словаря.
-    split_arrays = {}
-
     save_split_indices(
         cv_splits=final_inner_splits,
         output_path=final_optuna_dir / "split_indices.npz"
@@ -154,6 +150,7 @@ def run_dl_experiment(
     model_params = {
         "input_dim": int(X_full.shape[1]),
         "hidden_dim": int(best_params["hidden_dim"]),
+        "hidden_dim_2": int(best_params["hidden_dim_2"]),
         "activation": str(best_params["activation"])
     }
     

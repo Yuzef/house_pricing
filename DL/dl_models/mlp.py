@@ -27,8 +27,10 @@ class HousePriceMLP(nn.Module):
         self,
         input_dim: int,
         hidden_dim: int,
-        activation: str
+        activation: str,
+        hidden_dim_2: int | None = None
     ):
+
         super().__init__() 
 
         if input_dim < 1:
@@ -36,12 +38,32 @@ class HousePriceMLP(nn.Module):
         
         if hidden_dim < 1:
             raise ValueError("hidden_dim must be positive.")
+        
+        if hidden_dim_2 is not None and hidden_dim_2 < 1:
+            raise ValueError(
+                "hidden_dim_2 must be positive."
+            )
 
-        self.network = nn.Sequential(
+        layers = [
             nn.Linear(input_dim, hidden_dim),
             get_activation(activation),
-            nn.Linear(hidden_dim, 1)
-        )
+        ]
+
+        last_hidden_dim = hidden_dim
+
+        if hidden_dim_2 is not None:
+            layers.extend(
+                [
+                    nn.Linear(hidden_dim, hidden_dim_2),
+                    get_activation(activation),
+                ]
+            )
+
+            last_hidden_dim = hidden_dim_2
+
+        layers.append(nn.Linear(last_hidden_dim, 1))
+
+        self.network = nn.Sequential(*layers)
 
     def forward(self, features: torch.Tensor) -> torch.Tensor:
         predictions = self.network(features)

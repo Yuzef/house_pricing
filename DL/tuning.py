@@ -42,6 +42,11 @@ def make_objective(
             list(config.optuna.search_space.hidden_dim)
         )
 
+        hidden_dim_2 = trial.suggest_categorical(
+            "hidden_dim_2",
+            list(config.optuna.search_space.hidden_dim_2),
+        )
+
         activation = trial.suggest_categorical(
             "activation",
             list(config.optuna.search_space.activation),
@@ -106,6 +111,7 @@ def make_objective(
             model_params = {
                 "input_dim": int(prepared_data["X_train"].shape[1]),
                 "hidden_dim": int(hidden_dim),
+                "hidden_dim_2": int(hidden_dim_2),
                 "activation": str(activation)
             }
 
@@ -195,7 +201,10 @@ def run_optuna_study(
 
     storage_url = f"sqlite:///{database_path}"
 
-    sampler = optuna.samplers.TPESampler(seed=int(config.optuna.sampler.seed))
+    sampler = optuna.samplers.TPESampler(
+        seed=int(config.optuna.sampler.seed),
+        n_startup_trials=int(config.optuna.sampler.n_startup_trials)
+    )
 
     pruner = optuna.pruners.MedianPruner(
         n_startup_trials=int(config.optuna.pruner.n_startup_trials),
@@ -239,7 +248,6 @@ def run_optuna_study(
             gc_after_trial=True
         )
 
-    
     study.trials_dataframe().to_csv(
         study_dir / "trials.csv",
         index=False

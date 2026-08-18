@@ -149,6 +149,7 @@ def run_nested_cv(
         model_params = {
             "input_dim": int(prepared_outer["X_train"].shape[1]),
             "hidden_dim": int(best_params["hidden_dim"]),
+            "hidden_dim_2": int(best_params["hidden_dim_2"]),
             "activation": str(best_params["activation"]),
         }
 

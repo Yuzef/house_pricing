@@ -2,7 +2,7 @@ from omegaconf import OmegaConf
 
 config_dict = {
     'general': {
-        "experiment_name": "DL_MLP_optuna",
+        "experiment_name": "21_pytorch_mlp_two_hidden_layers",
         "seed": 0xFACED,
         "task_type": "regression" 
     },
@@ -79,13 +79,8 @@ config_dict = {
     },
 
     "model": {
-        "name": "19_pytorch_mlp_nested_cv",
-        "type": "DL",
-
-        "params": {
-            "hidden_dim": 128,
-            "activation": "relu",
-        },
+        "name": "21_pytorch_mlp_two_hidden_layers",
+        "type": "DL"
     },
 
     # sklearn tuning
@@ -186,7 +181,7 @@ config_dict = {
 
     "optuna": {
         "study_name": "${model.name}",
-        "target_n_trials": 5,
+        "target_n_trials": 12,
         "timeout_seconds": None,
         "n_jobs": 1,
 
@@ -200,21 +195,26 @@ config_dict = {
 
         "sampler": {
             "name": "tpe",
-            "seed": "${general.seed}"
+            "seed": "${general.seed}",
+            "n_startup_trials": 5
         },
 
         "pruner": {
             "name": "median",
-            "n_startup_trials": 2,
+            "n_startup_trials": 5,
             "n_warmup_steps": 1
         },
 
         "search_space": {
             "hidden_dim": [
+                16,
                 32,
-                64,
-                128,
-                256
+                64
+            ],
+
+            "hidden_dim_2": [
+                16,
+                32,
             ],
             
             "activation": [
@@ -224,20 +224,19 @@ config_dict = {
             ],
 
             "batch_size": [
-                32,
-                64,
-                128
+                16,
+                32
             ],
 
             "learning_rate": {
-                "low": 0.0001,
-                "high": 0.003,
+                "low": 0.0002,
+                "high": 0.001,
                 "log": True,
             },
 
             "weight_decay": {
                 "low": 0.0000001,
-                "high": 0.01,
+                "high": 0.003,
                 "log": True,
             },
         }
