@@ -188,122 +188,124 @@ config_dict = {
             "params": {
                 # Сколько раз вызывать scheduler.
                 # Здесь по 1 разу после каждой эпохи. 
-                "T_max": "${dl.training.num_epochs}",
+                "T_max": "${dl.training.max_epochs}",
                 "eta_min": 1e-6,
             }
         },
+    },
 
-        "optuna": {
-            "study_name": "${model.name}",
-            "target_n_trials": 15,
-            "timeout_seconds": None,
-            "n_jobs": 1,
+    "optuna": {
+        "study_name": "${model.name}",
+        "target_n_trials": 15,
+        "timeout_seconds": None,
+        "n_jobs": 1,
 
-            "inner_validation": {
-                "strategy": "stratified_kfold",
-                "n_splits": 3,
-                "n_bins": 10,
-                "shuffle": True,
-                "random_state": "${general.seed}"
-            },
+        "inner_validation": {
+            "strategy": "stratified_kfold",
+            "n_splits": 3,
+            "n_bins": 10,
+            "shuffle": True,
+            "random_state": "${general.seed}"
+        },
 
-            "sampler": {
-                "name": "tpe",
-                "seed": "${general.seed}",
-                "n_startup_trials": 5
-            },
+        "sampler": {
+            "name": "tpe",
+            "seed": "${general.seed}",
+            "n_startup_trials": 5
+        },
 
-            "pruner": {
-                "name": "median",
-                "n_startup_trials": 5,
-                "n_warmup_steps": 1
-            },
+        "pruner": {
+            "name": "median",
+            "n_startup_trials": 5,
+            "n_warmup_steps": 1
+        },
 
-            "search_space": {
-                "hidden_dim": [
-                    16,
-                    32,
-                    64
-                ],
+        "search_space": {
+            "hidden_dim": [
+                16,
+                32,
+                64
+            ],
 
-                "hidden_dim_2": [
-                    16,
-                    32,
-                ],
-                
-                "activation": [
-                    "relu",
-                    "gelu",
-                    "silu"
-                ],
+            "hidden_dim_2": [
+                16,
+                32,
+            ],
+            
+            "activation": [
+                "relu",
+                "gelu",
+                "silu"
+            ],
 
-                "batch_size": [
-                    16,
-                    32
-                ],
+            "batch_size": [
+                16,
+                32
+            ],
 
-                "learning_rate": {
-                    "adamw": {
-                        "low": 0.0002,
-                        "high": 0.001,
-                        "log": True,
-                    },
-
-                    "adam": {
-                        "low": 0.0002,
-                        "high": 0.001,
-                        "log": True,
-                    },
-
-                    "rmsprop": {
-                        "low": 0.0001,
-                        "high": 0.01,
-                        "log": True,
-                    },
-                },
-
-                "weight_decay": {
-                    "low": 0.0000001,
-                    "high": 0.003,
+            "learning_rate": {
+                "adamw": {
+                    "low": 0.0002,
+                    "high": 0.001,
                     "log": True,
                 },
 
-                "dropout": [
-                    0.0
-                ],
+                "adam": {
+                    "low": 0.0002,
+                    "high": 0.001,
+                    "log": True,
+                },
 
-                "optimizer": [
-                    "adamw",
-                    "adam",
-                    "rmsprop",
-                ]
-            }
-        },
+                "rmsprop": {
+                    "low": 0.0001,
+                    "high": 0.01,
+                    "log": True,
+                },
+            },
 
-        "inference": {
-            "enabled": True,
-            "prediction_column": "${target.name}",
-            "submission_filename": "submission.csv",
-        },
+            "weight_decay": {
+                "low": 0.0000001,
+                "high": 0.003,
+                "log": True,
+            },
 
-        "visualization": {
-            "enabled": True,
+            "dropout": [
+                0.0
+            ],
 
-            "save_fold_scores": True,
-            "save_optuna_history": True,
-
-            "save_dropout_effect": False,
-            "save_optimizer_effect": True,
-
-            "save_final_loss_curve": True,
-
-            "show_plots": False,
-            "figure_dpi": 150,
-            "style": "seaborn-v0_8-whitegrid",
-            "format": "png"
+            "optimizer": [
+                "adamw",
+                "adam",
+                "rmsprop",
+            ]
         }
+    },
 
-    }   
+    "inference": {
+        "enabled": True,
+        "prediction_column": "${target.name}",
+        "submission_filename": "submission.csv",
+    },
+
+    "visualization": {
+        "enabled": True,
+
+        "save_fold_scores": True,
+        "save_optuna_history": True,
+
+        "save_dropout_effect": False,
+        "save_optimizer_effect": True,
+
+        "save_learning_rate_curve": True,
+
+        "save_final_loss_curve": True,
+
+        "show_plots": False,
+        "figure_dpi": 150,
+        "style": "seaborn-v0_8-whitegrid",
+        "format": "png"
+    }
+  
 }
 
 config = OmegaConf.create(config_dict)
