@@ -19,6 +19,9 @@ from DL.tuning import (
     run_optuna_study,
     seed_everything,
 )
+
+from DL.schedulers import build_scheduler
+
 from utils.experiment_artifacts import (
     save_split_indices,
 )
@@ -172,6 +175,11 @@ def run_nested_cv(
             **optimizer_params,
         )
 
+        scheduler = build_scheduler(
+            optimizer=optimizer,
+            cfg_scheduler=config.dl.scheduler,
+        )
+
         start_time = time.perf_counter()
 
         fit_model(
@@ -179,6 +187,7 @@ def run_nested_cv(
             train_loader=train_loader,
             valid_loader=None,
             optimizer=optimizer,
+            scheduler=scheduler,
             device=device,
             max_epochs=recommended_epochs,
             model_params=model_params,

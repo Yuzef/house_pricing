@@ -184,6 +184,60 @@ def plot_final_loss_curve(history, output_path, cfg):
 
     plt.close(fig)
 
+def plot_learning_rate_curve(
+    history,
+    output_path,
+    cfg,
+):
+    if not history:
+        raise ValueError("Training history is empty.")
+
+    epochs = [
+        int(record["epoch"]) + 1
+        for record in history
+    ]
+
+    learning_rates = [
+        float(record["learning_rate"])
+        for record in history
+    ]
+
+    fig, ax = plt.subplots(figsize=(7, 4))
+
+    ax.plot(
+        epochs,
+        learning_rates,
+        color="tab:orange",
+        linewidth=2,
+        label="Learning rate",
+    )
+
+    ax.set(
+        title="Final model learning rate schedule",
+        xlabel="Epoch",
+        ylabel="Learning rate",
+    )
+
+    ax.ticklabel_format(
+        axis="y",
+        style="scientific",
+        scilimits=(0, 0),
+    )
+
+    ax.legend()
+    fig.tight_layout()
+
+    fig.savefig(
+        output_path,
+        dpi=int(cfg.figure_dpi),
+        bbox_inches="tight",
+    )
+
+    if cfg.show_plots:
+        plt.show()
+
+    plt.close(fig)
+
 def create_experiment_plots(
     *,
     fold_results,
@@ -258,6 +312,17 @@ def create_experiment_plots(
         )
 
         created_paths.append(path)
+
+    if config.visualization.save_learning_rate_curve:
+        path = plots_dir / f"final_learning_rate.{extension}"
+
+        plot_learning_rate_curve(
+            history=final_history,
+            output_path=path,
+            cfg=config.visualization,
+        )
+
+        created_paths.append(path) 
 
     return created_paths
     

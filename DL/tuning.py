@@ -8,6 +8,7 @@ import optuna
 import torch
 from optuna.trial import TrialState
 from DL.optimizers import build_optimizer
+from DL.schedulers import build_scheduler
 
 from DL.data import (
     build_train_loader,
@@ -144,12 +145,18 @@ def make_objective(
                 **optimizer_params
             )
 
+            scheduler = build_scheduler(
+                optimizer=optimizer,
+                cfg_scheduler=config.dl.scheduler
+            )
+
             # Запуск Trainer:
             result = fit_model(
                 model=model,
                 train_loader=train_loader,
                 valid_loader=valid_loader,
                 optimizer=optimizer,
+                scheduler=scheduler,
                 device=device,
                 max_epochs=int(config.dl.training.max_epochs),
                 model_params=model_params,

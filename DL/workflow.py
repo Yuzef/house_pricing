@@ -18,6 +18,8 @@ from DL.data import (
     transform_target,
 )
 
+from DL.schedulers import build_scheduler
+
 from DL.visualization import create_experiment_plots
 
 from utils.validation import build_cv_splits
@@ -177,6 +179,11 @@ def run_dl_experiment(
         **optimizer_params,
     )
 
+    scheduler = build_scheduler(
+        optimizer=optimizer,
+        cfg_scheduler=config.dl.scheduler,
+    )
+
     # final training.
     checkpoints_dir = experiment_dir / "checkpoints"
 
@@ -185,6 +192,7 @@ def run_dl_experiment(
         train_loader=final_loader,
         valid_loader=None,
         optimizer=optimizer,
+        scheduler=scheduler,
         device=device,
         max_epochs=final_epochs,
         model_params=model_params,
@@ -199,6 +207,7 @@ def run_dl_experiment(
     final_checkpoint = build_checkpoint(
         model=final_model,
         optimizer=optimizer,
+        scheduler=scheduler,
         epoch=result["last_epoch"],
         global_step=result["global_step"],
         model_params=model_params,

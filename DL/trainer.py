@@ -91,6 +91,7 @@ def fit_model(
     model_params: dict,
     optimizer_params: dict,
     gradient_clip_norm,
+    scheduler=None,
     valid_loader=None,
     trial=None,
     checkpoint_dir: Path | None = None,
@@ -99,7 +100,7 @@ def fit_model(
     global_step: int = 0,
     initial_best_score: float = float("inf"),
     initial_best_epoch=None,
-    initial_history=None,
+    initial_history=None
 ):
     """
                     fit_model
@@ -136,6 +137,7 @@ def fit_model(
     history = list(initial_history or [])
 
     for epoch in range(start_epoch, max_epochs):
+        current_learning_rate = float(optimizer.param_groups[0]["lr"])
         train_loss, step_increment = train_one_epoch(
             model=model,
             loader=train_loader,
@@ -159,7 +161,8 @@ def fit_model(
         epoch_record = {
             "epoch": epoch,
             "train_loss": train_loss,
-            "valid_rmsle": valid_rmsle
+            "valid_rmsle": valid_rmsle,
+            "learning_rate": current_learning_rate
         }
 
         history.append(epoch_record)
@@ -172,11 +175,15 @@ def fit_model(
         if is_best:
             best_score = valid_rmsle
             best_epoch = epoch
+        
+        if scheduler is not None:
+            scheduler.step()
 
         if checkpoint_dir is not None:
             checkpoint = build_checkpoint(
             model=model,
             optimizer=optimizer,
+            scheduler=scheduler,
             epoch=epoch,
             global_step=global_step,
             model_params=model_params,
