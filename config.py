@@ -2,15 +2,14 @@ from omegaconf import OmegaConf
 
 config_dict = {
     'general': {
-        "experiment_name": "22_pytorch_mlp_batchnorm",
+        "experiment_name": "23_pytorch_mlp_dropout",
         "seed": 0xFACED,
         "task_type": "regression" 
     },
     "paths": {
         "train_csv": "data_raw/train.csv",
         "test_csv": "data_raw/test.csv",
-        "trained_models": "trained_models",
-        "plots_dir": "plots",
+        "trained_models": "trained_models"
     },
     "target": {
         "name": "SalePrice",
@@ -79,7 +78,7 @@ config_dict = {
     },
 
     "model": {
-        "name": "22_pytorch_mlp_batchnorm",
+        "name": "23_pytorch_mlp_dropout",
         "type": "DL",
         "params": {
             "batch_norm": {

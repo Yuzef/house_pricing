@@ -49,7 +49,7 @@ model:
   type: DL
   params:
     batch_norm:
-      enabled: true
+      enabled: false
 tuning:
   enabled: false
   search_type: random
@@ -160,7 +160,21 @@ optuna:
       low: 1.0e-07
       high: 0.003
       log: true
+    dropout:
+    - 0.0
+    - 0.1
+    - 0.2
+    - 0.3
 inference:
   enabled: true
   prediction_column: SalePrice
   submission_filename: submission.csv
+visualization:
+  enabled: true
+  save_fold_scores: true
+  save_optuna_history: true
+  save_dropout_effect: true
+  show_plots: false
+  figure_dpi: 150
+  style: seaborn-v0_8-whitegrid
+  format: png
