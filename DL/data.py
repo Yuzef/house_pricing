@@ -195,8 +195,41 @@ def prepare_fold(
     X_train = feature_pipeline.fit_transform(X_train_raw)
     X_valid = feature_pipeline.transform(X_valid_raw)
 
-    X_train = to_float32_array(X_train)
-    X_valid = to_float32_array(X_valid)
+    if embeddings_enabled(config):
+        (
+            X_train,
+            X_cat_train,
+            categorical_cardinalities
+        ) = split_embedding_features(
+            X_train,
+            feature_pipeline
+        )
+
+        (
+            X_valid,
+            X_cat_valid,
+            valid_cardinalities
+        ) = split_embedding_features(
+            X_valid,
+            feature_pipeline
+        )
+
+        if (
+            categorical_cardinalities != valid_cardinalities
+        ):
+            raise ValueError(
+            "Train and validation cardinalities "
+            "do not match."
+            )
+    
+    else:
+
+        X_train = to_float32_array(X_train)
+        X_valid = to_float32_array(X_valid)
+
+        X_cat_train = None
+        X_cat_valid = None
+        categorical_cardinalities = None
 
     y_train = transform_target(y.iloc[train_indices])
     y_valid = transform_target(y.iloc[valid_indices])
@@ -204,10 +237,18 @@ def prepare_fold(
     return {
         "X_train": X_train,
         "X_valid": X_valid,
+
+        "X_cat_train": X_cat_train,
+        "X_cat_valid": X_cat_valid,
+
+        "categorical_cardinalities": (categorical_cardinalities),
+
         "y_train": y_train,
         "y_valid": y_valid,
+
         "train_indices": train_indices,
         "valid_indices": valid_indices,
+
         "feature_pipeline": feature_pipeline,
     }
 
@@ -219,12 +260,37 @@ def build_train_loader(
     seed: int,
     num_workers: int,
     pin_memory: bool,
-    drop_last: bool
+    drop_last: bool,
+    X_cat: np.ndarray | None = None
 ):
     feature_tensor = torch.from_numpy(X)
     target_tensor = torch.from_numpy(y)
 
-    dataset = TensorDataset(feature_tensor, target_tensor)
+    if X_cat is None:
+        dataset = TensorDataset(
+            feature_tensor,
+            target_tensor
+        )
+    
+    else:
+        categorical_tensor = torch.from_numpy(
+            X_cat
+        )
+
+        if categorical_tensor.dtype != torch.long:
+            raise TypeError(
+            "Categorical tensor must have "
+            "torch.long dtype."
+            )
+        
+        dataset = TensorDataset(
+            feature_tensor,
+            categorical_tensor,
+            target_tensor
+        )
+
+
+
 
     # Генератор случайных чисел,
     # фиксируем порядок перемешивания для воспроизводимости.

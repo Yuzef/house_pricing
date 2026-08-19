@@ -13,6 +13,7 @@ from DL.schedulers import build_scheduler
 from DL.data import (
     build_train_loader,
     prepare_fold,
+    embeddings_enabled
 )
 from DL.dl_models.mlp import HousePriceMLP
 from DL.trainer import fit_model
@@ -37,7 +38,22 @@ def make_objective(
 
         base_seed = int(config.general.seed)
 
+        use_embeddings = embeddings_enabled(config)
+
         # Гиперпараметры выбираются один раз на trial.
+        if use_embeddings:
+            embedding_dim = trial.suggest_categorical(
+                "embedding_dim",
+                list(
+                    config
+                    .optuna
+                    .search_space
+                    .embedding_dim
+                ),
+            )
+        else:
+            embedding_dim = None
+
         hidden_dim = trial.suggest_categorical(
             "hidden_dim",
             list(config.optuna.search_space.hidden_dim)
@@ -103,6 +119,7 @@ def make_objective(
     
             train_loader, generator = build_train_loader(
                 X=prepared_data["X_train"],
+                X_cat=prepared_data["X_cat_train"],
                 y=prepared_data["y_train"],
                 batch_size=batch_size,
                 shuffle=True,
@@ -114,6 +131,7 @@ def make_objective(
 
             valid_loader, _ = build_train_loader(
                 X=prepared_data["X_valid"],
+                X_cat=prepared_data["X_cat_train"],
                 y=prepared_data["y_valid"],
                 batch_size=batch_size,
                 shuffle=False,

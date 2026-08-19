@@ -132,6 +132,7 @@ def run_nested_cv(
         train_loader, generator = (
             build_train_loader(
                 X=prepared_outer["X_train"],
+                X_cat=prepared_outer["X_cat_train"],
                 y=prepared_outer["y_train"],
                 batch_size=int(best_params["batch_size"]),
                 shuffle=True,
@@ -144,6 +145,7 @@ def run_nested_cv(
 
         valid_loader, _ = build_train_loader(
             X=prepared_outer["X_valid"],
+            X_cat=prepared_outer["X_cat_train"],
             y=prepared_outer["y_valid"],
             batch_size=int(best_params["batch_size"]),
             shuffle=False,

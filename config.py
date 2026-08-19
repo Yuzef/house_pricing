@@ -282,6 +282,12 @@ config_dict = {
                 "adamw",
                 "adam",
                 "rmsprop",
+            ],
+
+            "embedding_dim": [
+                2,
+                4,
+                8,
             ]
         }
     },
