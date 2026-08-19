@@ -1,0 +1,22 @@
+2026-08-19 12:28:33 | INFO | Experiment started: 23_pytorch_mlp_dropout
+2026-08-19 12:28:33 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-19 12:28:33 | INFO | PyTorch device: cpu
+2026-08-19 12:28:33 | INFO | Outer fold 1/5 started
+2026-08-19 12:29:13 | INFO | Outer fold 1 RMSLE: 0.12453
+2026-08-19 12:29:13 | INFO | Outer fold 2/5 started
+2026-08-19 12:29:52 | INFO | Outer fold 2 RMSLE: 0.16714
+2026-08-19 12:29:52 | INFO | Outer fold 3/5 started
+2026-08-19 12:30:31 | INFO | Outer fold 3 RMSLE: 0.13427
+2026-08-19 12:30:31 | INFO | Outer fold 4/5 started
+2026-08-19 12:31:10 | INFO | Outer fold 4 RMSLE: 0.14997
+2026-08-19 12:31:10 | INFO | Outer fold 5/5 started
+2026-08-19 12:31:57 | INFO | Outer fold 5 RMSLE: 0.22415
+2026-08-19 12:31:57 | INFO | Nested outer CV RMSLE: 0.16001 +/- 0.03933
+2026-08-19 12:31:57 | INFO | Outer CV results saved to: trained_models/23_pytorch_mlp_dropout/cv_results.csv
+2026-08-19 12:31:57 | INFO | Nested CV metrics saved to: trained_models/23_pytorch_mlp_dropout/metrics.json
+2026-08-19 12:31:57 | INFO | Final Optuna study started
+2026-08-19 12:32:57 | INFO | Submission saved to: trained_models/23_pytorch_mlp_dropout/submission.csv
+2026-08-19 12:32:58 | INFO | Plot saved to: trained_models/23_pytorch_mlp_dropout/plots/outer_fold_scores.png
+2026-08-19 12:32:58 | INFO | Plot saved to: trained_models/23_pytorch_mlp_dropout/plots/optuna_history.png
+2026-08-19 12:32:58 | INFO | Plot saved to: trained_models/23_pytorch_mlp_dropout/plots/dropout_effect.png
+2026-08-19 12:32:58 | INFO | DL experiment comleted successfully

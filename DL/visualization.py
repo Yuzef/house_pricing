@@ -112,11 +112,83 @@ def plot_dropout_effect(study, output_path, cfg):
 
     plt.close(fig)
 
+def plot_optimizer_effect(study, output_path, cfg):
+    ax = plot_slice(
+        study,
+        params=["optimizer"],
+    )
+
+    ax.set_title("Optimizer vs inner CV RMSLE")
+    ax.set_ylabel("Inner CV RMSLE (lower is better)")
+
+    fig = ax.figure
+    fig.tight_layout()
+
+    fig.savefig(
+        output_path,
+        dpi=int(cfg.figure_dpi),
+        bbox_inches="tight",
+    )
+
+    if cfg.show_plots:
+        plt.show()
+
+    plt.close(fig)
+
+def plot_final_loss_curve(history, output_path, cfg):
+    if not history:
+        raise ValueError("Training history is empty.")
+
+    epochs = [
+        int(epoch_record["epoch"]) + 1
+        for epoch_record in history
+    ]
+
+    train_losses = [
+        float(epoch_record["train_loss"])
+        for epoch_record in history
+    ]
+
+    fig, ax = plt.subplots(figsize=(7, 4))
+
+    ax.plot(
+        epochs,
+        train_losses,
+        color="tab:blue",
+        linewidth=2,
+        label="Train loss",
+    )
+
+    ax.set(
+        title="Final model training loss",
+        xlabel="Epoch",
+        ylabel="MSE loss in log1p target space",
+    )
+
+    # В начале loss значительно больше, чем в конце.
+    # Логарифмическая шкала позволит увидеть
+    # весь процесс обучения.
+    ax.set_yscale("log")
+
+    ax.legend()
+    fig.tight_layout()
+
+    fig.savefig(
+        output_path,
+        dpi=int(cfg.figure_dpi),
+        bbox_inches="tight",
+    )
+
+    if cfg.show_plots:
+        plt.show()
+
+    plt.close(fig)
 
 def create_experiment_plots(
     *,
     fold_results,
     study,
+    final_history,
     experiment_dir: Path,
     config,
 ) -> list[Path]:
@@ -141,6 +213,15 @@ def create_experiment_plots(
             cfg=config.visualization,
         )
 
+    if config.visualization.save_final_loss_curve:
+        path = plots_dir / f"final_training_loss.{extension}"
+
+        plot_final_loss_curve(
+            history=final_history,
+            output_path=path,
+            cfg=config.visualization,
+        )
+
         created_paths.append(path)
 
     if config.visualization.save_optuna_history:
@@ -158,6 +239,17 @@ def create_experiment_plots(
         path = plots_dir / f"dropout_effect.{extension}"
 
         plot_dropout_effect(
+            study=study,
+            output_path=path,
+            cfg=config.visualization,
+        )
+
+        created_paths.append(path)
+    
+    if config.visualization.save_optimizer_effect:
+        path = plots_dir / f"optimizer_effect.{extension}"
+
+        plot_optimizer_effect(
             study=study,
             output_path=path,
             cfg=config.visualization,

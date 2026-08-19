@@ -7,7 +7,7 @@ import numpy as np
 import optuna
 import torch
 from optuna.trial import TrialState
-from torch.optim import AdamW
+from DL.optimizers import build_optimizer
 
 from DL.data import (
     build_train_loader,
@@ -62,11 +62,20 @@ def make_objective(
             list(config.optuna.search_space.batch_size)
         )
 
+        optimizer_name = trial.suggest_categorical(
+            "optimizer",
+            list(config.optuna.search_space.optimizer),
+        )
+
+        learning_rate_cfg = (
+            config.optuna.search_space.learning_rate[optimizer_name]
+        )
+
         learning_rate = trial.suggest_float(
-            "learning_rate",
-            low=float(config.optuna.search_space.learning_rate.low),
-            high=float(config.optuna.search_space.learning_rate.high),
-            log=bool(config.optuna.search_space.learning_rate.log)
+            f"{optimizer_name}_learning_rate",
+            low=float(learning_rate_cfg.low),
+            high=float(learning_rate_cfg.high),
+            log=bool(learning_rate_cfg.log),
         )
 
         weight_decay = trial.suggest_float(
@@ -125,12 +134,13 @@ def make_objective(
             model = HousePriceMLP(**model_params).to(device)
 
             optimizer_params = {
+                "name": str(optimizer_name),
                 "lr": float(learning_rate),
-                "weight_decay": float(weight_decay)
+                "weight_decay": float(weight_decay),
             }
 
-            optimizer = AdamW(
-                model.parameters(),
+            optimizer = build_optimizer(
+                parameters=model.parameters(),
                 **optimizer_params
             )
 

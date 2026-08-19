@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 
 import pandas as pd
-from torch.optim import AdamW
+from DL.optimizers import build_optimizer
 
 from DL.data import (
     build_train_loader,
@@ -93,6 +93,10 @@ def run_nested_cv(
         )
 
         best_params = dict(study.best_params)
+
+        optimizer_name = str(best_params["optimizer"])
+
+        learning_rate = float(best_params[f"{optimizer_name}_learning_rate"])
 
         recommended_epochs = study.best_trial.user_attrs.get("recommended_epochs")
 

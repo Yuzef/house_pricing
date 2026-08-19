@@ -2,7 +2,7 @@ from omegaconf import OmegaConf
 
 config_dict = {
     'general': {
-        "experiment_name": "23_pytorch_mlp_dropout",
+        "experiment_name": "24_pytorch_mlp_optimizers",
         "seed": 0xFACED,
         "task_type": "regression" 
     },
@@ -78,7 +78,7 @@ config_dict = {
     },
 
     "model": {
-        "name": "23_pytorch_mlp_dropout",
+        "name": "24_pytorch_mlp_optimizers",
         "type": "DL",
         "params": {
             "batch_norm": {
@@ -185,7 +185,7 @@ config_dict = {
 
     "optuna": {
         "study_name": "${model.name}",
-        "target_n_trials": 12,
+        "target_n_trials": 15,
         "timeout_seconds": None,
         "n_jobs": 1,
 
@@ -233,9 +233,23 @@ config_dict = {
             ],
 
             "learning_rate": {
-                "low": 0.0002,
-                "high": 0.001,
-                "log": True,
+                "adamw": {
+                    "low": 0.0002,
+                    "high": 0.001,
+                    "log": True,
+                },
+
+                "adam": {
+                    "low": 0.0002,
+                    "high": 0.001,
+                    "log": True,
+                },
+
+                "rmsprop": {
+                    "low": 0.0001,
+                    "high": 0.01,
+                    "log": True,
+                },
             },
 
             "weight_decay": {
@@ -245,11 +259,14 @@ config_dict = {
             },
 
             "dropout": [
-                0.0,
-                0.1,
-                0.2,
-                0.3,
+                0.0
             ],
+
+            "optimizer": [
+                "adamw",
+                "adam",
+                "rmsprop",
+            ]
         }
     },
    
@@ -277,6 +294,7 @@ config_dict = {
         "save_fold_scores": True,
         "save_optuna_history": True,
         "save_dropout_effect": True,
+        "save_final_loss_curve": True,
 
         "show_plots": False,
         "figure_dpi": 150,

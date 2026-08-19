@@ -3,7 +3,7 @@ from pathlib import Path
 import joblib
 import torch
 
-from torch.optim import AdamW
+from DL.optimizers import build_optimizer
 
 from DL.checkpoints import (
     build_checkpoint,
@@ -162,14 +162,19 @@ def run_dl_experiment(
         **model_params
     ).to(device)
 
+    optimizer_name = str(best_params["optimizer"])
+
+    learning_rate = float(best_params[f"{optimizer_name}_learning_rate"])
+
     optimizer_params = {
-        "lr": float(best_params["learning_rate"]),
-        "weight_decay": float(best_params["weight_decay"])
+        "name": optimizer_name,
+        "lr": learning_rate,
+        "weight_decay": float(best_params["weight_decay"]),
     }
 
-    optimizer = AdamW(
-        final_model.parameters(),
-        **optimizer_params
+    optimizer = build_optimizer(
+        parameters=final_model.parameters(),
+        **optimizer_params,
     )
 
     # final training.
@@ -230,6 +235,7 @@ def run_dl_experiment(
     plot_paths = create_experiment_plots(
         fold_results=fold_results,
         study=final_study,
+        final_history=result["history"],
         experiment_dir=experiment_dir,
         config=config,
     )
