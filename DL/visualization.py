@@ -212,6 +212,8 @@ def create_experiment_plots(
             output_path=path,
             cfg=config.visualization,
         )
+        
+        created_paths.append(path)
 
     if config.visualization.save_final_loss_curve:
         path = plots_dir / f"final_training_loss.{extension}"

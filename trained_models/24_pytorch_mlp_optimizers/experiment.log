@@ -1,0 +1,23 @@
+2026-08-19 14:26:20 | INFO | Experiment started: 24_pytorch_mlp_optimizers
+2026-08-19 14:26:21 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-19 14:26:21 | INFO | PyTorch device: cpu
+2026-08-19 14:26:21 | INFO | Outer fold 1/5 started
+2026-08-19 14:26:22 | INFO | Outer fold 1 RMSLE: 0.14480
+2026-08-19 14:26:22 | INFO | Outer fold 2/5 started
+2026-08-19 14:26:23 | INFO | Outer fold 2 RMSLE: 0.15546
+2026-08-19 14:26:23 | INFO | Outer fold 3/5 started
+2026-08-19 14:26:23 | INFO | Outer fold 3 RMSLE: 0.13077
+2026-08-19 14:26:23 | INFO | Outer fold 4/5 started
+2026-08-19 14:26:25 | INFO | Outer fold 4 RMSLE: 0.13850
+2026-08-19 14:26:25 | INFO | Outer fold 5/5 started
+2026-08-19 14:26:26 | INFO | Outer fold 5 RMSLE: 0.13279
+2026-08-19 14:26:26 | INFO | Nested outer CV RMSLE: 0.14046 +/- 0.01001
+2026-08-19 14:26:26 | INFO | Outer CV results saved to: trained_models/24_pytorch_mlp_optimizers/cv_results.csv
+2026-08-19 14:26:26 | INFO | Nested CV metrics saved to: trained_models/24_pytorch_mlp_optimizers/metrics.json
+2026-08-19 14:26:26 | INFO | Final Optuna study started
+2026-08-19 14:26:27 | INFO | Submission saved to: trained_models/24_pytorch_mlp_optimizers/submission.csv
+2026-08-19 14:26:28 | INFO | Plot saved to: trained_models/24_pytorch_mlp_optimizers/plots/outer_fold_scores.png
+2026-08-19 14:26:28 | INFO | Plot saved to: trained_models/24_pytorch_mlp_optimizers/plots/final_training_loss.png
+2026-08-19 14:26:28 | INFO | Plot saved to: trained_models/24_pytorch_mlp_optimizers/plots/optuna_history.png
+2026-08-19 14:26:28 | INFO | Plot saved to: trained_models/24_pytorch_mlp_optimizers/plots/optimizer_effect.png
+2026-08-19 14:26:28 | INFO | DL experiment comleted successfully

@@ -293,7 +293,10 @@ config_dict = {
 
         "save_fold_scores": True,
         "save_optuna_history": True,
-        "save_dropout_effect": True,
+
+        "save_dropout_effect": False,
+        "save_optimizer_effect": True,
+
         "save_final_loss_curve": True,
 
         "show_plots": False,

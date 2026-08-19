@@ -162,11 +162,15 @@ def run_nested_cv(
         model = HousePriceMLP(**model_params).to(device)
 
         optimizer_params = {
-            "lr": float(best_params["learning_rate"]),
+            "name": optimizer_name,
+            "lr": learning_rate,
             "weight_decay": float(best_params["weight_decay"]),
         }
 
-        optimizer = AdamW(model.parameters(), **optimizer_params)
+        optimizer = build_optimizer(
+            parameters=model.parameters(),
+            **optimizer_params,
+        )
 
         start_time = time.perf_counter()
 
