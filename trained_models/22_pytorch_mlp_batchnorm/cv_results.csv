@@ -1,0 +1,6 @@
+fold,validation_score,recommended_epochs,best_params,fit_time_seconds
+1,0.19730189595443412,97,"{""activation"": ""relu"", ""batch_size"": 16, ""hidden_dim"": 64, ""hidden_dim_2"": 16, ""learning_rate"": 0.000939945716869706, ""weight_decay"": 2.0404976901749873e-07}",2.889724374981597
+2,0.33654527062685413,100,"{""activation"": ""gelu"", ""batch_size"": 32, ""hidden_dim"": 32, ""hidden_dim_2"": 32, ""learning_rate"": 0.0009962036308772731, ""weight_decay"": 1.0851114639983751e-07}",1.5665611668955535
+3,0.31047787149880596,98,"{""activation"": ""gelu"", ""batch_size"": 32, ""hidden_dim"": 32, ""hidden_dim_2"": 32, ""learning_rate"": 0.0009962036308772731, ""weight_decay"": 1.0851114639983751e-07}",1.5289549170993268
+4,0.4105801156203405,99,"{""activation"": ""silu"", ""batch_size"": 16, ""hidden_dim"": 64, ""hidden_dim_2"": 32, ""learning_rate"": 0.0009620695348905948, ""weight_decay"": 1.0809126262172465e-07}",2.9378670000005513
+5,0.15161021929810384,96,"{""activation"": ""silu"", ""batch_size"": 16, ""hidden_dim"": 64, ""hidden_dim_2"": 32, ""learning_rate"": 0.0009620695348905948, ""weight_decay"": 1.0809126262172465e-07}",2.8348984168842435

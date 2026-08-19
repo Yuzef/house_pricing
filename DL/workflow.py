@@ -18,6 +18,8 @@ from DL.data import (
     transform_target,
 )
 
+from DL.visualization import create_experiment_plots
+
 from utils.validation import build_cv_splits
 from utils.experiment_artifacts import save_split_indices
 
@@ -59,7 +61,7 @@ def run_dl_experiment(
 
     logger.info("PyTorch device: %s", device)
 
-    run_nested_cv(
+    fold_results = run_nested_cv(
         X=X_train,
         y=y_train,
         config=config,
@@ -151,7 +153,9 @@ def run_dl_experiment(
         "input_dim": int(X_full.shape[1]),
         "hidden_dim": int(best_params["hidden_dim"]),
         "hidden_dim_2": int(best_params["hidden_dim_2"]),
-        "activation": str(best_params["activation"])
+        "activation": str(best_params["activation"]),
+        "use_batch_norm": bool(config.model.params.batch_norm.enabled),
+        "dropout": float(best_params["dropout"])
     }
     
     final_model = HousePriceMLP(
@@ -221,4 +225,15 @@ def run_dl_experiment(
         )
 
         logger.info("Submission saved to: %s", submission_path)
+    
+    # Visualization.
+    plot_paths = create_experiment_plots(
+        fold_results=fold_results,
+        study=final_study,
+        experiment_dir=experiment_dir,
+        config=config,
+    )
+
+    for plot_path in plot_paths:
+        logger.info("Plot saved to: %s", plot_path)
 

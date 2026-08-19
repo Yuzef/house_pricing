@@ -28,7 +28,9 @@ class HousePriceMLP(nn.Module):
         input_dim: int,
         hidden_dim: int,
         activation: str,
-        hidden_dim_2: int | None = None
+        hidden_dim_2: int | None = None,
+        use_batch_norm: bool = False,
+        dropout: float = 0.0
     ):
 
         super().__init__() 
@@ -43,11 +45,19 @@ class HousePriceMLP(nn.Module):
             raise ValueError(
                 "hidden_dim_2 must be positive."
             )
+        
+        if not 0.0 <= dropout < 1.0:
+            raise ValueError("dropout must be in the interval [0.0, 1.0).")
 
         layers = [
-            nn.Linear(input_dim, hidden_dim),
-            get_activation(activation),
+            nn.Linear(input_dim, hidden_dim)
         ]
+
+        if use_batch_norm:
+            layers.append(nn.BatchNorm1d(hidden_dim))
+        
+        layers.append(get_activation(activation))
+        layers.append(nn.Dropout(p=dropout))
 
         last_hidden_dim = hidden_dim
 
@@ -56,6 +66,7 @@ class HousePriceMLP(nn.Module):
                 [
                     nn.Linear(hidden_dim, hidden_dim_2),
                     get_activation(activation),
+                    nn.Dropout(p=dropout)
                 ]
             )
 

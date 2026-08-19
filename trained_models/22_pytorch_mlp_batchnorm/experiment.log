@@ -1,0 +1,19 @@
+2026-08-19 11:10:19 | INFO | Experiment started: 22_pytorch_mlp_batchnorm
+2026-08-19 11:10:19 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-19 11:10:19 | INFO | PyTorch device: cpu
+2026-08-19 11:10:19 | INFO | Outer fold 1/5 started
+2026-08-19 11:11:24 | INFO | Outer fold 1 RMSLE: 0.19730
+2026-08-19 11:11:24 | INFO | Outer fold 2/5 started
+2026-08-19 11:12:12 | INFO | Outer fold 2 RMSLE: 0.33655
+2026-08-19 11:12:12 | INFO | Outer fold 3/5 started
+2026-08-19 11:13:03 | INFO | Outer fold 3 RMSLE: 0.31048
+2026-08-19 11:13:03 | INFO | Outer fold 4/5 started
+2026-08-19 11:14:09 | INFO | Outer fold 4 RMSLE: 0.41058
+2026-08-19 11:14:09 | INFO | Outer fold 5/5 started
+2026-08-19 11:15:14 | INFO | Outer fold 5 RMSLE: 0.15161
+2026-08-19 11:15:14 | INFO | Nested outer CV RMSLE: 0.28130 +/- 0.10547
+2026-08-19 11:15:14 | INFO | Outer CV results saved to: trained_models/22_pytorch_mlp_batchnorm/cv_results.csv
+2026-08-19 11:15:14 | INFO | Nested CV metrics saved to: trained_models/22_pytorch_mlp_batchnorm/metrics.json
+2026-08-19 11:15:14 | INFO | Final Optuna study started
+2026-08-19 11:16:34 | INFO | Submission saved to: trained_models/22_pytorch_mlp_batchnorm/submission.csv
+2026-08-19 11:16:34 | INFO | DL experiment comleted successfully

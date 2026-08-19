@@ -52,6 +52,11 @@ def make_objective(
             list(config.optuna.search_space.activation),
         )
 
+        dropout = trial.suggest_categorical(
+            "dropout",
+            list(config.optuna.search_space.dropout),
+        )
+
         batch_size = trial.suggest_categorical(
             "batch_size",
             list(config.optuna.search_space.batch_size)
@@ -112,7 +117,9 @@ def make_objective(
                 "input_dim": int(prepared_data["X_train"].shape[1]),
                 "hidden_dim": int(hidden_dim),
                 "hidden_dim_2": int(hidden_dim_2),
-                "activation": str(activation)
+                "activation": str(activation),
+                "use_batch_norm": bool(config.model.params.batch_norm.enabled),
+                "dropout": float(dropout)
             }
 
             model = HousePriceMLP(**model_params).to(device)

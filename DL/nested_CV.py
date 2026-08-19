@@ -151,6 +151,8 @@ def run_nested_cv(
             "hidden_dim": int(best_params["hidden_dim"]),
             "hidden_dim_2": int(best_params["hidden_dim_2"]),
             "activation": str(best_params["activation"]),
+            "use_batch_norm": bool(config.model.params.batch_norm.enabled),
+            "dropout": float(best_params["dropout"])
         }
 
         model = HousePriceMLP(**model_params).to(device)

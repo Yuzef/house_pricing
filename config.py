@@ -2,7 +2,7 @@ from omegaconf import OmegaConf
 
 config_dict = {
     'general': {
-        "experiment_name": "21_pytorch_mlp_two_hidden_layers",
+        "experiment_name": "22_pytorch_mlp_batchnorm",
         "seed": 0xFACED,
         "task_type": "regression" 
     },
@@ -79,8 +79,13 @@ config_dict = {
     },
 
     "model": {
-        "name": "21_pytorch_mlp_two_hidden_layers",
-        "type": "DL"
+        "name": "22_pytorch_mlp_batchnorm",
+        "type": "DL",
+        "params": {
+            "batch_norm": {
+                "enabled": True,
+            }
+        }
     },
 
     # sklearn tuning
@@ -239,6 +244,13 @@ config_dict = {
                 "high": 0.003,
                 "log": True,
             },
+
+            "dropout": [
+                0.0,
+                0.1,
+                0.2,
+                0.3,
+            ],
         }
     },
    
@@ -260,23 +272,18 @@ config_dict = {
         "submission_filename": "submission.csv",
     },
 
-    # "visualization": {
-    #     "enabled": True,
+    "visualization": {
+        "enabled": True,
 
-    #     "save_training_curves": True,
-    #     "save_fold_scores": True,
-    #     "save_summary_bar": True,
+        "save_fold_scores": True,
+        "save_optuna_history": True,
+        "save_dropout_effect": True,
 
-    #     "show_plots": False,
-    #     "figure_dpi": 150,
-    #     "style": "whitegrid",
-
-    #     "training_curves": {
-    #         "metrics": ["loss", "accuracy"],
-    #         "plot_train": True,
-    #         "plot_valid": True,
-    #     },
-    # }
+        "show_plots": False,
+        "figure_dpi": 150,
+        "style": "seaborn-v0_8-whitegrid",
+        "format": "png"
+    }
 }
 
 config = OmegaConf.create(config_dict)

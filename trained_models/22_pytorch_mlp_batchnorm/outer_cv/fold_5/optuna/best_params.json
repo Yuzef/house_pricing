@@ -1,0 +1,23 @@
+{
+  "trial_number": 7,
+  "value": 0.2667927707868767,
+  "params": {
+    "hidden_dim": 64,
+    "hidden_dim_2": 32,
+    "activation": "silu",
+    "batch_size": 16,
+    "learning_rate": 0.0009620695348905948,
+    "weight_decay": 1.0809126262172465e-07
+  },
+  "fold_scores": [
+    0.26722811290008724,
+    0.2923370969550276,
+    0.24081310250551521
+  ],
+  "fold_epochs": [
+    96,
+    98,
+    95
+  ],
+  "recommended_epochs": 96
+}
