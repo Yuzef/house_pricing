@@ -46,7 +46,11 @@ def select_nominal_columns(X):
         if column not in ORDINAL_QUALITY_COLUMNS
     ]
 
-def build_preprocessor(cfg_preprocessing) -> ColumnTransformer:
+def build_preprocessor(
+    cfg_preprocessing,
+    *,
+    use_embeddings: bool = False,
+    ) -> ColumnTransformer:
 #             исходный X
 #                │
 #        ┌───────┴────────┐
@@ -68,19 +72,47 @@ def build_preprocessor(cfg_preprocessing) -> ColumnTransformer:
 # остальные ────────┘
 
     encoding_type = str(cfg_preprocessing.nominal_encoding.type)
+
     sparse_output = bool(
         cfg_preprocessing
         .nominal_encoding
         .get("sparse_output", True)
     )
 
-    if (
-        encoding_type == "catboost_native"
-        and cfg_preprocessing.ordinal_encoding.enabled
-    ):
+    if encoding_type == "one_hot":
+        categorical_steps.append(
+            (
+                "encoder",
+                OneHotEncoder(
+                    handle_unknown=(
+                        cfg_preprocessing
+                        .nominal_encoding
+                        .handle_unknown
+                    ),
+                    sparse_output=sparse_output,
+                ),
+            )
+        )
+
+    elif encoding_type == "embedding":
+        categorical_steps.append(
+            (
+                "encoder",
+                OrdinalEncoder(
+                    handle_unknown="use_encoded_value",
+                    unknown_value=-1,
+                    dtype=np.int64,
+                ),
+            )
+        )
+
+    elif encoding_type == "catboost_native":
+        pass
+
+    else:
         raise ValueError(
-            "Ordinal encoding must be disabled "
-            "when CatBoost native categories are enabled."
+            f"Unknown nominal encoding type: "
+            f"{encoding_type}"
         )
 
 
@@ -126,10 +158,24 @@ def build_preprocessor(cfg_preprocessing) -> ColumnTransformer:
                 "encoder",
                 OneHotEncoder(
                     handle_unknown=(
-                        cfg_preprocessing.nominal_encoding.handle_unknown
+                        cfg_preprocessing.nominal_encoding.handle_unknown # ignore
                     ),
                     sparse_output=sparse_output,
                 )
+            )
+        )
+
+    elif encoding_type == "embedding":
+        categorical_steps.append(
+            (
+                "encoder",
+                OrdinalEncoder(
+                    handle_unknown=(
+                        cfg_preprocessing.nominal_encoding.handle_unknown
+                    ), # "use_encoded_value"
+                    unknown_value=-1,
+                    dtype=np.int64,
+                ),
             )
         )
     

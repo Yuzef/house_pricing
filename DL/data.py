@@ -5,8 +5,122 @@ import torch
 from sklearn.pipeline import Pipeline
 from torch.utils.data import DataLoader, TensorDataset
 
+from omegaconf import OmegaConf
 from utils.feature_engineering import build_feature_engineer
 from utils.preprocessing import build_preprocessor
+
+def embeddings_enabled(config) -> bool:
+    return (
+        str(
+            config
+            .preprocessing
+            .nominal_encoding
+            .type
+        )
+        == "embedding"
+    )
+
+def split_embedding_features(
+    features,
+    feature_pipeline,
+):
+    if hasattr(features, "toarray"):
+        raise ValueError(
+            "Embedding preprocessing returned "
+            "a sparse matrix."
+        )
+
+    features = np.asarray(features)
+
+    preprocessor = (
+        feature_pipeline
+        .named_steps["preprocessing"]
+    )
+
+    output_indices = preprocessor.output_indices_
+
+    numerical_parts = [
+        np.asarray(
+            features[:, output_indices["numerical"]],
+            dtype=np.float32,
+        )
+    ]
+
+    # Если ordinal quality когда-нибудь будет включён,
+    # эти признаки остаются числовыми.
+    if "ordinal_quality" in output_indices:
+        ordinal_slice = output_indices[
+            "ordinal_quality"
+        ]
+
+        if ordinal_slice.stop > ordinal_slice.start:
+            numerical_parts.append(
+                np.asarray(
+                    features[:, ordinal_slice],
+                    dtype=np.float32,
+                )
+            )
+
+    numerical_features = np.concatenate(
+        numerical_parts,
+        axis=1,
+    )
+
+    categorical_features = np.asarray(
+        features[:, output_indices["categorical"]],
+        dtype=np.int64,
+    )
+
+    # unknown -1 становится индексом 0.
+    categorical_features += 1
+
+    encoder = (
+        preprocessor
+        .named_transformers_["categorical"]
+        .named_steps["encoder"]
+    )
+
+    categorical_cardinalities = [
+        len(categories) + 1
+        for categories in encoder.categories_
+    ]
+
+    return (
+        numerical_features,
+        categorical_features,
+        categorical_cardinalities,
+    )
+
+def split_dl_features(features, feature_pipeline):
+    features = np.asarray(features)
+
+    preprocessor = feature_pipeline.named_steps["preprocessing"]
+    output_indices = preprocessor.output_indices_
+
+    numerical = np.asarray(
+        features[:, output_indices["numerical"]],
+        dtype=np.float32,
+    )
+
+    categorical = np.asarray(
+        features[:, output_indices["categorical"]],
+        dtype=np.int64,
+    )
+
+    categorical += 1  # unknown -1 становится индексом 0
+
+    encoder = (
+        preprocessor
+        .named_transformers_["categorical"]
+        .named_steps["encoder"]
+    )
+
+    categorical_cardinalities = [
+        len(categories) + 1  # +1 для unknown
+        for categories in encoder.categories_
+    ]
+
+    return numerical, categorical, categorical_cardinalities
 
 def build_dl_feature_pipeline(config) -> Pipeline:
     """

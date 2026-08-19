@@ -2,7 +2,7 @@ from omegaconf import OmegaConf
 
 config_dict = {
     'general': {
-        "experiment_name": "25_pytorch_mlp_cosine_scheduler",
+        "experiment_name": "26_pytorch_mlp_embeddings",
         "seed": 0xFACED,
         "task_type": "regression" 
     },
@@ -44,8 +44,8 @@ config_dict = {
         },
 
         "nominal_encoding": {
-            "type": "one_hot", # catboost_native or one_hot.
-            "handle_unknown": "ignore",
+            "type": "embedding", # catboost_native or one_hot or embedding.
+            "handle_unknown": "ignore", # or ignore.
             "sparse_output": False # False for DL pipeline.
         },
 
@@ -78,7 +78,7 @@ config_dict = {
     },
 
     "model": {
-        "name": "25_pytorch_mlp_cosine_scheduler",
+        "name": "26_pytorch_mlp_embeddings",
         "type": "DL",
         "params": {
             "batch_norm": {
@@ -172,6 +172,11 @@ config_dict = {
     },
 
     "dl": {
+
+        "embeddings": {
+            "enabled": False,
+        },
+
         "training": {
             "max_epochs": 100,
             "device": "cpu", # auto, mps not stable for AdamW
