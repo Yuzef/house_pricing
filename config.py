@@ -83,7 +83,7 @@ config_dict = {
         "type": "DL",
         "params": {
             "batch_norm": {
-                "enabled": True,
+                "enabled": False,
             }
         }
     },
