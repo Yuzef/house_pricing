@@ -24,14 +24,43 @@ def train_one_epoch(
     total_objects = 0
     global_step_increment = 0
 
-    for features, targets in loader:
-        features = features.to(device, non_blocking=True)
+    for batch in loader:
+        if len(batch) == 2:
+            features, targets = batch
+            categorical_features = None
 
-        targets = targets.to(device, non_blocking=True)
+        elif len(batch) == 3:
+            (
+                features,
+                categorical_features,
+                targets,
+            ) = batch
+
+        else:
+            raise ValueError(
+                f"Unexpected batch length: "
+                f"{len(batch)}."
+            )
+
+        features = features.to(
+            device,
+            non_blocking=True,
+        )
+
+        targets = targets.to(
+            device,
+            non_blocking=True,
+        )
+
+        if categorical_features is not None:
+            categorical_features = categorical_features.to(
+                    device,
+                    non_blocking=True,
+                )
 
         optimizer.zero_grad(set_to_none=True)
 
-        predictions = model(features)
+        predictions = model(features, categorical_features)
         loss = criterion(predictions, targets)
 
         loss.backward()
@@ -44,7 +73,7 @@ def train_one_epoch(
 
         optimizer.step()
 
-        batch_size = features.shape[0]
+        batch_size = targets.shape[0]
 
         total_loss += loss.item() * batch_size
         total_objects += batch_size
@@ -64,18 +93,37 @@ def evaluate_log_rmse(model, loader, device) -> float:
 
     # Отключение градиентов.
     with torch.inference_mode():
-        for features, targets in loader:
+        for batch in loader:
+            if len(batch) == 2:
+                features, targets = batch
+                categorical_features = None
+
+            elif len(batch) == 3:
+                (
+                    features,
+                    categorical_features,
+                    targets,
+                ) = batch
+
+            else:
+                raise ValueError(
+                    f"Unexpected batch length: "
+                    f"{len(batch)}."
+                )
+
             features = features.to(device)
             targets = targets.to(device)
 
-            predictions = model(features)
+            if categorical_features is not None:
+                categorical_features = categorical_features.to(device)
 
-            # Все predictions меньше 0 заменить на 0, т.к. SalePrice >= 0
+            predictions = model(features, categorical_features)
+
             predictions = predictions.clamp_min(0.0)
 
             squared_error_sum += torch.sum((predictions - targets) ** 2).item()
 
-            total_objects += features.shape[0]
+            total_objects += targets.shape[0]
 
     mean_squared_error = squared_error_sum / total_objects
 

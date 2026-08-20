@@ -38,9 +38,6 @@ class HousePriceMLP(nn.Module):
     ):
 
         super().__init__() 
-
-        if input_dim < 1:
-            raise ValueError("input_dim must be positive.")
         
         if hidden_dim < 1:
             raise ValueError("hidden_dim must be positive.")
@@ -52,11 +49,6 @@ class HousePriceMLP(nn.Module):
         
         if not 0.0 <= dropout < 1.0:
             raise ValueError("dropout must be in the interval [0.0, 1.0).")
-        
-        if embedding_dims is None:
-            raise ValueError(
-                "embedding_dims are required."
-            )
 
         self.uses_embeddings = (
             categorical_cardinalities is not None
@@ -76,6 +68,12 @@ class HousePriceMLP(nn.Module):
             if numerical_dim is None or numerical_dim < 1:
                 raise ValueError(
                     "numerical_dim must be positive "
+                    "when embeddings are enabled."
+                )
+
+            if embedding_dims is None:
+                raise ValueError(
+                    "embedding_dims are required "
                     "when embeddings are enabled."
                 )
 

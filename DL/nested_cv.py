@@ -123,7 +123,12 @@ def run_nested_cv(
             train_indices=outer_train_indices,
             valid_indices=outer_valid_indices,
             config=config,
-        )       
+        )
+
+        use_embeddings = (
+            prepared_outer["categorical_cardinalities"] is not None
+        )
+
 
         outer_seed = base_seed + outer_index
 
@@ -132,7 +137,7 @@ def run_nested_cv(
         train_loader, generator = (
             build_train_loader(
                 X=prepared_outer["X_train"],
-                X_cat=prepared_outer["X_cat_train"],
+                X_cat=prepared_outer["X_cat_valid"],
                 y=prepared_outer["y_train"],
                 batch_size=int(best_params["batch_size"]),
                 shuffle=True,
@@ -156,13 +161,47 @@ def run_nested_cv(
         )
 
         model_params = {
-            "input_dim": int(prepared_outer["X_train"].shape[1]),
             "hidden_dim": int(best_params["hidden_dim"]),
             "hidden_dim_2": int(best_params["hidden_dim_2"]),
             "activation": str(best_params["activation"]),
             "use_batch_norm": bool(config.model.params.batch_norm.enabled),
             "dropout": float(best_params["dropout"])
         }
+
+        # Для OHE
+        if not use_embeddings:
+            model_params.update(
+                {
+                    "input_dim": int(
+                        prepared_outer["X_train"].shape[1]
+                        ),
+                }
+            )
+        # Для embeddings
+        else:
+            cardinalities = (prepared_outer["categorical_cardinalities"])
+
+            model_params.update(
+                {
+                    "input_dim": None,
+
+                    "numerical_dim": int(
+                        prepared_outer[
+                            "X_train"
+                        ].shape[1]
+                    ),
+
+                    "categorical_cardinalities": list(
+                        cardinalities
+                    ),
+
+                    "embedding_dims": [
+                        int(best_params["embedding_dim"])
+                        for _ in cardinalities
+                    ],
+                }
+            )
+        
 
         model = HousePriceMLP(**model_params).to(device)
 

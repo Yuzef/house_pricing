@@ -5,7 +5,6 @@ import torch
 from sklearn.pipeline import Pipeline
 from torch.utils.data import DataLoader, TensorDataset
 
-from omegaconf import OmegaConf
 from utils.feature_engineering import build_feature_engineer
 from utils.preprocessing import build_preprocessor
 
@@ -90,37 +89,6 @@ def split_embedding_features(
         categorical_features,
         categorical_cardinalities,
     )
-
-def split_dl_features(features, feature_pipeline):
-    features = np.asarray(features)
-
-    preprocessor = feature_pipeline.named_steps["preprocessing"]
-    output_indices = preprocessor.output_indices_
-
-    numerical = np.asarray(
-        features[:, output_indices["numerical"]],
-        dtype=np.float32,
-    )
-
-    categorical = np.asarray(
-        features[:, output_indices["categorical"]],
-        dtype=np.int64,
-    )
-
-    categorical += 1  # unknown -1 становится индексом 0
-
-    encoder = (
-        preprocessor
-        .named_transformers_["categorical"]
-        .named_steps["encoder"]
-    )
-
-    categorical_cardinalities = [
-        len(categories) + 1  # +1 для unknown
-        for categories in encoder.categories_
-    ]
-
-    return numerical, categorical, categorical_cardinalities
 
 def build_dl_feature_pipeline(config) -> Pipeline:
     """

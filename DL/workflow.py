@@ -14,6 +14,8 @@ from DL.checkpoints import (
 from DL.data import (
     build_dl_feature_pipeline,
     build_train_loader,
+    embeddings_enabled,
+    split_embedding_features,
     to_float32_array,
     transform_target,
 )
@@ -121,7 +123,23 @@ def run_dl_experiment(
     final_feature_pipeline = build_dl_feature_pipeline(config)
 
     X_full = final_feature_pipeline.fit_transform(X_train)
-    X_full = to_float32_array(X_full)
+
+    use_embeddings = embeddings_enabled(config)
+
+    if use_embeddings:
+        (
+            X_full,
+            X_cat_full,
+            categorical_cardinalities,
+        ) = split_embedding_features(
+            X_full,
+            final_feature_pipeline,
+        )
+    
+    else:
+        X_full = to_float32_array(X_full)
+        X_cat_full = None
+        categorical_cardinalities = None
 
     y_full = transform_target(y_train)
 
@@ -138,6 +156,7 @@ def run_dl_experiment(
     final_loader, generator = (
         build_train_loader(
             X=X_full,
+            X_cat=X_cat_full,
             y=y_full,
             batch_size=int(best_params["batch_size"]),
             shuffle=True,
@@ -152,7 +171,6 @@ def run_dl_experiment(
     seed_everything(seed)
     
     model_params = {
-        "input_dim": int(X_full.shape[1]),
         "hidden_dim": int(best_params["hidden_dim"]),
         "hidden_dim_2": int(best_params["hidden_dim_2"]),
         "activation": str(best_params["activation"]),
@@ -160,6 +178,34 @@ def run_dl_experiment(
         "dropout": float(best_params["dropout"])
     }
     
+    # Для OHE
+    if not use_embeddings:
+        model_params.update(
+            {
+                "input_dim": int(
+                    X_full.shape[1]
+                    ),
+            }
+        )
+    # Для embeddings
+    else:
+        embedding_dim = int(best_params["embedding_dim"])
+
+        model_params.update(
+            {
+                "input_dim": None,
+
+                "numerical_dim": int(X_full.shape[1]),
+
+                "categorical_cardinalities": list(categorical_cardinalities),
+
+                "embedding_dims": [
+                    embedding_dim
+                    for _ in categorical_cardinalities
+                ],
+            }
+        )
+
     final_model = HousePriceMLP(
         **model_params
     ).to(device)

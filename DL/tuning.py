@@ -131,7 +131,7 @@ def make_objective(
 
             valid_loader, _ = build_train_loader(
                 X=prepared_data["X_valid"],
-                X_cat=prepared_data["X_cat_train"],
+                X_cat=prepared_data["X_cat_valid"],
                 y=prepared_data["y_valid"],
                 batch_size=batch_size,
                 shuffle=False,
@@ -142,13 +142,46 @@ def make_objective(
             )
 
             model_params = {
-                "input_dim": int(prepared_data["X_train"].shape[1]),
                 "hidden_dim": int(hidden_dim),
                 "hidden_dim_2": int(hidden_dim_2),
                 "activation": str(activation),
                 "use_batch_norm": bool(config.model.params.batch_norm.enabled),
                 "dropout": float(dropout)
             }
+
+            # Для OHE
+            if not use_embeddings:
+                model_params.update(
+                    {
+                        "input_dim": int(
+                            prepared_data["X_train"].shape[1]
+                            ),
+                    }
+                )
+            # Для embeddings
+            else:
+                cardinalities = (prepared_data["categorical_cardinalities"])
+
+                model_params.update(
+                    {
+                        "input_dim": None,
+
+                        "numerical_dim": int(
+                            prepared_data[
+                                "X_train"
+                            ].shape[1]
+                        ),
+
+                        "categorical_cardinalities": list(
+                            cardinalities
+                        ),
+
+                        "embedding_dims": [
+                            int(embedding_dim)
+                            for _ in cardinalities
+                        ],
+                    }
+                )
 
             model = HousePriceMLP(**model_params).to(device)
 

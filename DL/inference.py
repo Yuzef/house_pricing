@@ -7,7 +7,10 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 from DL.checkpoints import read_checkpoint
-from DL.data import to_float32_array
+from DL.data import (
+    split_embedding_features,
+    to_float32_array,
+)
 from DL.dl_models.mlp import HousePriceMLP
 
 def create_dl_submission(
@@ -26,31 +29,59 @@ def create_dl_submission(
     # Загрузка preprocessing.
     feature_pipeline = joblib.load(feature_pipeline_path)
     X_test_transformed = feature_pipeline.transform(X_test)
-    X_test_transformed = to_float32_array(X_test_transformed)
 
-    # Загрузка checkpoint и модели.
-    checkpoint = read_checkpoint(
-        path=checkpoint_path,
-        device=device
-    )
-    
+    checkpoint = read_checkpoint(path=checkpoint_path, device=device)
+
     model_params = dict(checkpoint["model_params"])
 
-    if (
-        X_test_transformed.shape[1] != model_params["input_dim"]
-    ):
-        raise ValueError(
-            "Preprocessor output dimension does not "
-            "match checkpoint input_dim."
-        )
+    use_embeddings = model_params.get("categorical_cardinalities")is not None
     
-    model = HousePriceMLP(**model_params).to(device)
-    model.load_state_dict(checkpoint["model_state_dict"])
+    if not use_embeddings:
+        X_test_transformed = to_float32_array(X_test_transformed)
 
-    model.eval()
+        if (
+            X_test_transformed.shape[1]
+            != model_params["input_dim"]
+        ):
+            raise ValueError(
+                "Preprocessor output dimension does "
+                "not match checkpoint input_dim."
+            )
 
-    # Inference.
-    dataset = TensorDataset(torch.from_numpy(X_test_transformed))
+        dataset = TensorDataset(torch.from_numpy(X_test_transformed))
+
+    else:
+        (
+            X_test_numerical,
+            X_test_categorical,
+            categorical_cardinalities,
+        ) = split_embedding_features(
+            X_test_transformed,
+            feature_pipeline,
+        )
+
+        if (
+            list(categorical_cardinalities)
+            != model_params["categorical_cardinalities"]
+        ):
+            raise ValueError(
+                "Categorical cardinalities do not "
+                "match checkpoint."
+            )
+
+        if (
+            X_test_numerical.shape[1]
+            != model_params["numerical_dim"]
+        ):
+            raise ValueError(
+                "Numerical dimension does not "
+                "match checkpoint."
+            )
+
+        dataset = TensorDataset(
+            torch.from_numpy(X_test_numerical),
+            torch.from_numpy(X_test_categorical)
+        )
 
     loader = DataLoader(
         dataset,
@@ -61,12 +92,37 @@ def create_dl_submission(
     log_predictions = []
 
     with torch.inference_mode():
-        for (features,) in loader:
-            features = features.to(device)
+        for batch in loader:
+            if len(batch) == 1:
+                features = batch[0].to(device)
 
-            batch_predictions = model(features)
+                batch_predictions = model(
+                    features
+                )
 
-            log_predictions.append(batch_predictions.cpu().numpy())
+            elif len(batch) == 2:
+                numerical_features = batch[0].to(
+                    device
+                )
+
+                categorical_features = batch[1].to(
+                    device
+                )
+
+                batch_predictions = model(
+                    numerical_features,
+                    categorical_features,
+                )
+
+            else:
+                raise ValueError(
+                    f"Unexpected inference batch: "
+                    f"{len(batch)}."
+                )
+
+            log_predictions.append(
+                batch_predictions.cpu().numpy()
+            )
         
     # Обратное преобразование.
     log_predictions = np.concatenate(log_predictions)
