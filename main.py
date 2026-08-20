@@ -54,6 +54,47 @@ def main() -> None:
 
     # Развилка.
 
+    # Ensemble enabled:
+    if bool(config.ensemble.enabled):
+        ensemble_models = [
+            joblib.load(str(model_path))
+            for model_path in config.ensemble.model_paths
+        ]
+
+        model_predictions = [
+            model.predict(X_test)
+            for model in ensemble_models
+        ]
+
+        weights = (
+            None
+            if config.ensemble.weights is None
+            else list(config.ensemble.weights)
+        )
+
+        ensemble_predictions = average_predictions(
+            predictions=model_predictions,
+            weights=weights,
+        )
+
+        submission_path = create_submission(
+            model=None,
+            X_test=X_test,
+            test_ids=test_ids,
+            id_column=config.id_column,
+            prediction_column=config.inference.prediction_column,
+            experiment_dir=experiment_dir,
+            filename=config.inference.submission_filename,
+            predictions=ensemble_predictions,
+        )
+
+        logger.info(
+            "Ensemble submission saved to: %s",
+            submission_path,
+        )
+
+        return
+
     # DL ветка.
     if str(config.model.type) == "DL":
         run_dl_experiment(

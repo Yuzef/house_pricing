@@ -7,8 +7,6 @@ from DL.optimizers import build_optimizer
 
 from DL.checkpoints import (
     build_checkpoint,
-    read_checkpoint,
-    restore_training_state,
     save_checkpoint,
 )
 from DL.data import (
@@ -135,7 +133,7 @@ def run_dl_experiment(
             X_full,
             final_feature_pipeline,
         )
-    
+
     else:
         X_full = to_float32_array(X_full)
         X_cat_full = None

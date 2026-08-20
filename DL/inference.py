@@ -34,7 +34,7 @@ def create_dl_submission(
 
     model_params = dict(checkpoint["model_params"])
 
-    use_embeddings = model_params.get("categorical_cardinalities")is not None
+    use_embeddings = model_params.get("categorical_cardinalities") is not None
     
     if not use_embeddings:
         X_test_transformed = to_float32_array(X_test_transformed)
@@ -83,6 +83,10 @@ def create_dl_submission(
             torch.from_numpy(X_test_categorical)
         )
 
+    model = HousePriceMLP(**model_params).to(device)
+    model.load_state_dict(checkpoint["model_state_dict"])
+    model.eval()
+
     loader = DataLoader(
         dataset,
         batch_size=batch_size,
@@ -96,9 +100,7 @@ def create_dl_submission(
             if len(batch) == 1:
                 features = batch[0].to(device)
 
-                batch_predictions = model(
-                    features
-                )
+                batch_predictions = model(features)
 
             elif len(batch) == 2:
                 numerical_features = batch[0].to(

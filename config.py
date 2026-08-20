@@ -2,7 +2,7 @@ from omegaconf import OmegaConf
 
 config_dict = {
     'general': {
-        "experiment_name": "26_pytorch_mlp_embeddings",
+        "experiment_name": "27_average_catboost_rf_elastic_net",
         "seed": 0xFACED,
         "task_type": "regression" 
     },
@@ -77,9 +77,23 @@ config_dict = {
         },
     },
 
+    "ensemble": {
+        "enabled": True,
+
+        "model_paths": [
+            "trained_models/15_catboost_random_search_quality_area/model.joblib",
+            "trained_models/14_random_forest_refined_grid_quality_area/model.joblib",
+            "trained_models/10_elastic_net_grid_quality_area/model.joblib",
+        ],
+
+        # None — обычное усреднение.
+        # [0.6, 0.2, 0.2] — взвешенное усреднение.
+        "weights": None,
+    },
+
     "model": {
-        "name": "26_pytorch_mlp_embeddings",
-        "type": "DL",
+        "name": "27_average_catboost_rf_elastic_net",
+        "type": "ensemble",
         "params": {
             "batch_norm": {
                 "enabled": False,
