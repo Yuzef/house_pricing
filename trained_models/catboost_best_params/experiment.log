@@ -1,0 +1,15 @@
+2026-08-20 17:31:54 | INFO | Experiment started: catboost_best_params
+2026-08-20 17:31:54 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-20 17:32:04 | INFO | Cross-validation results:
+ fold  validation_score  fit_time_seconds  score_time_seconds  train_score
+    1          0.106815          2.010023            0.005814     0.050420
+    2          0.130142          1.786774            0.005096     0.050472
+    3          0.121891          1.938473            0.005121     0.050311
+    4          0.126221          1.942374            0.005183     0.050044
+    5          0.113888          2.206603            0.005600     0.050104
+2026-08-20 17:32:04 | INFO | Metrics saved to: trained_models/catboost_best_params/metrics.json
+2026-08-20 17:32:04 | INFO | CV RMSLE: 0.11979 +/- 0.00944
+2026-08-20 17:32:04 | INFO | CV results saved to: trained_models/catboost_best_params/cv_results.csv
+2026-08-20 17:32:06 | INFO | Model saved to: trained_models/catboost_best_params/model.joblib
+2026-08-20 17:32:06 | INFO | Submission saved to: trained_models/catboost_best_params/submission.csv
+2026-08-20 17:32:06 | INFO | Experiment completed successfully

@@ -2,7 +2,7 @@ from omegaconf import OmegaConf
 
 config_dict = {
     'general': {
-        "experiment_name": "30_stacking_ridge_dollars",
+        "experiment_name": "catboost_best_params",
         "seed": 0xFACED,
         "task_type": "regression" 
     },
@@ -190,9 +190,6 @@ config_dict = {
         "name": "catboost",
         "type": "catboost",
         "params": {
-            "batch_norm": {
-                "enabled": False,
-            },
             "loss_function": "RMSE",
             "iterations": 1000,
             "learning_rate": 0.05,
@@ -293,6 +290,11 @@ config_dict = {
     },
 
     "dl": {
+        "model": {
+            "batch_norm": {
+            "enabled": False,
+            },
+        },
 
         "training": {
             "max_epochs": 100,
