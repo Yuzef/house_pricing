@@ -2,8 +2,6 @@ from pathlib import Path
 
 import numpy as np
 import joblib
-from omegaconf import DictConfig, OmegaConf
-from sklearn.base import BaseEstimator
 
 def prepare_experiment_dir(config) -> Path:
     experiment_dir = (

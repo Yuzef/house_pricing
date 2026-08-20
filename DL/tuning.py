@@ -145,7 +145,7 @@ def make_objective(
                 "hidden_dim": int(hidden_dim),
                 "hidden_dim_2": int(hidden_dim_2),
                 "activation": str(activation),
-                "use_batch_norm": bool(config.model.params.batch_norm.enabled),
+                "use_batch_norm": bool(config.dl.model.batch_norm.enabled),
                 "dropout": float(dropout)
             }
 

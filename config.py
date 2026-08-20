@@ -4,7 +4,6 @@ config_dict = {
     'general': {
         "experiment_name": "catboost_best_params",
         "seed": 0xFACED,
-        "task_type": "regression" 
     },
     "paths": {
         "train_csv": "data_raw/train.csv",
@@ -222,69 +221,44 @@ config_dict = {
         "verbose": 1,
 
         "param_space": {
-            "model__regressor__n_estimators": [
-                300,
-                600,
+            "model__regressor__iterations": [
+                500,
                 1000,
                 1500,
+                2000,
             ],
-
             "model__regressor__learning_rate": [
                 0.01,
                 0.03,
                 0.05,
                 0.1,
             ],
-
-            "model__regressor__max_depth": [
-                2,
-                3,
+            "model__regressor__depth": [
                 4,
+                5,
                 6,
+                7,
                 8,
             ],
-
-            "model__regressor__min_child_weight": [
+            "model__regressor__l2_leaf_reg": [
                 1.0,
                 3.0,
                 5.0,
                 10.0,
-            ],
-
-            "model__regressor__gamma": [
-                0.0,
-                0.01,
-                0.05,
-                0.1,
-            ],
-
-            "model__regressor__subsample": [
-                0.6,
-                0.8,
-                1.0,
-            ],
-
-            "model__regressor__colsample_bytree": [
-                0.5,
-                0.7,
-                0.9,
-                1.0,
-            ],
-
-            "model__regressor__reg_alpha": [
-                0.0,
-                0.001,
-                0.01,
-                0.1,
-                1.0,
-            ],
-
-            "model__regressor__reg_lambda": [
-                0.1,
-                1.0,
-                5.0,
-                10.0,
                 20.0,
+            ],
+            "model__regressor__random_strength": [
+                0.0,
+                0.5,
+                1.0,
+                2.0,
+            ],
+            "model__regressor__bagging_temperature": [
+                0.0,
+                0.5,
+                1.0,
+                2.0,
+                5.0,
             ],
         },
     },
