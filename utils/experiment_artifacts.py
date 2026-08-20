@@ -2,6 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import joblib
+from omegaconf import OmegaConf
 
 def prepare_experiment_dir(config) -> Path:
     experiment_dir = (
