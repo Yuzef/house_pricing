@@ -1,3 +1,5 @@
+import joblib
+
 from sklearn.pipeline import Pipeline
 
 from utils.load_data import load_data_func
@@ -10,7 +12,10 @@ from utils.feature_engineering import build_feature_engineer
 from utils.validation import run_cross_validation
 from utils.model_selection import build_model_search
 
-from utils.inference import create_submission
+from utils.inference import (
+    average_predictions,
+    create_submission,
+)
 from DL.workflow import run_dl_experiment
 
 from utils.experiment_artifacts import (
@@ -53,12 +58,20 @@ def main() -> None:
     test_ids = test_df[id_column].copy()
 
     # Развилка.
-
+    ensemble_enabled = bool(config.ensemble.enabled)
+    ensemble_method = str(config.ensemble.method)
     # Ensemble enabled:
-    if bool(config.ensemble.enabled):
+    if (
+        ensemble_enabled
+        and ensemble_method not in {"averaging", "voting"}
+    ):
+        raise ValueError(
+            f"Unknown ensemble method: {ensemble_method}"
+        )
+    if ensemble_enabled and ensemble_method == "averaging":
         ensemble_models = [
             joblib.load(str(model_path))
-            for model_path in config.ensemble.model_paths
+            for model_path in config.ensemble.averaging.model_paths
         ]
 
         model_predictions = [
@@ -68,8 +81,8 @@ def main() -> None:
 
         weights = (
             None
-            if config.ensemble.weights is None
-            else list(config.ensemble.weights)
+            if config.ensemble.averaging.weights is None
+            else list(config.ensemble.averaging.weights)
         )
 
         ensemble_predictions = average_predictions(
@@ -114,10 +127,15 @@ def main() -> None:
     # Классическая sklearn ветка.
     feature_engineer = build_feature_engineer(config.feature_engineering)
 
+    if ensemble_enabled and ensemble_method == "voting":
+        active_model_cfg = config.ensemble.voting
+    else:
+        active_model_cfg = config.model
+
     encoding_type = str(config.preprocessing.nominal_encoding.type)
 
     if encoding_type == "catboost_native":
-        if str(config.model.type) != "catboost":
+        if str(active_model_cfg.type) != "catboost":
             raise ValueError(
                 "catboost_native encoding can only "
                 "be used with the CatBoost model."
@@ -134,7 +152,7 @@ def main() -> None:
 
     preprocessor = build_preprocessor(config.preprocessing)
     
-    model = get_model_from_cfg(config.model, cat_features=cat_features)
+    model = get_model_from_cfg(active_model_cfg, cat_features=cat_features)
 
     pipeline = Pipeline(
         steps=[

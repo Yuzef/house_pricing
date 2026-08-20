@@ -13,7 +13,10 @@ from sklearn.linear_model import (
     LinearRegression
 )
 from sklearn.compose import TransformedTargetRegressor
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import (
+    RandomForestRegressor,
+    VotingRegressor,
+)
 
 from catboost import CatBoostRegressor
 from lightgbm import LGBMRegressor
@@ -27,6 +30,23 @@ def get_model_from_cfg(model_cfg, cat_features=None):
         resolve=True,
         throw_on_missing=True
     )
+
+    if model_type == "voting_regressor":
+        estimators = [
+            (
+                str(estimator_cfg.name),
+                get_model_from_cfg(
+                    estimator_cfg,
+                    cat_features=cat_features,
+                ),
+            )
+            for estimator_cfg in model_cfg.estimators
+        ]
+
+        return VotingRegressor(
+            estimators=estimators,
+            **model_params,
+        )
 
     if model_type == "linear_regression":
         experiment_model = LinearRegression(

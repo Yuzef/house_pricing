@@ -1,0 +1,8 @@
+2026-08-20 15:02:54 | INFO | Experiment started: 28_voting_catboost_rf_elastic_net
+2026-08-20 15:02:54 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-20 15:03:31 | INFO | Metrics saved to: trained_models/28_voting_catboost_rf_elastic_net/metrics.json
+2026-08-20 15:03:31 | INFO | CV RMSLE: 0.12433 +/- 0.01635
+2026-08-20 15:03:31 | INFO | CV results saved to: trained_models/28_voting_catboost_rf_elastic_net/cv_results.csv
+2026-08-20 15:03:41 | INFO | Model saved to: trained_models/28_voting_catboost_rf_elastic_net/model.joblib
+2026-08-20 15:03:41 | INFO | Submission saved to: trained_models/28_voting_catboost_rf_elastic_net/submission.csv
+2026-08-20 15:03:41 | INFO | Experiment completed successfully

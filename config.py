@@ -2,7 +2,7 @@ from omegaconf import OmegaConf
 
 config_dict = {
     'general': {
-        "experiment_name": "27_average_catboost_rf_elastic_net",
+        "experiment_name": "28_voting_catboost_rf_elastic_net",
         "seed": 0xFACED,
         "task_type": "regression" 
     },
@@ -44,9 +44,9 @@ config_dict = {
         },
 
         "nominal_encoding": {
-            "type": "embedding", # catboost_native or one_hot or embedding.
+            "type": "one_hot", # catboost_native or one_hot or embedding.
             "handle_unknown": "ignore", # or ignore.
-            "sparse_output": False # False for DL pipeline.
+            "sparse_output": True # False for DL pipeline.
         },
 
         "ordinal_encoding": {
@@ -80,20 +80,88 @@ config_dict = {
     "ensemble": {
         "enabled": True,
 
-        "model_paths": [
-            "trained_models/15_catboost_random_search_quality_area/model.joblib",
-            "trained_models/14_random_forest_refined_grid_quality_area/model.joblib",
-            "trained_models/10_elastic_net_grid_quality_area/model.joblib",
-        ],
+        # "averaging" или "voting".
+        "method": "voting",
 
-        # None — обычное усреднение.
-        # [0.6, 0.2, 0.2] — взвешенное усреднение.
-        "weights": None,
+        # Настройки эксперимента 27.
+        "averaging": {
+            "model_paths": [
+                "trained_models/15_catboost_random_search_quality_area/model.joblib",
+                "trained_models/14_random_forest_refined_grid_quality_area/model.joblib",
+                "trained_models/10_elastic_net_grid_quality_area/model.joblib",
+            ],
+
+            "weights": None,
+        },
+
+        # Настройки 28 VotingRegressor.
+        "voting": {
+            "type": "voting_regressor",
+
+            "params": {
+                "weights": None,
+                "n_jobs": 1,
+                "verbose": True,
+            },
+
+            "estimators": [
+                {
+                    "name": "catboost",
+                    "type": "catboost",
+
+                    "params": {
+                        "loss_function": "RMSE",
+                        "iterations": 1000,
+                        "learning_rate": 0.05,
+                        "depth": 5,
+                        "l2_leaf_reg": 3.0,
+                        "random_strength": 1.0,
+                        "bootstrap_type": "Bayesian",
+                        "bagging_temperature": 2.0,
+                        "random_seed": "${general.seed}",
+                        "thread_count": 1,
+                        "verbose": False,
+                        "allow_writing_files": False,
+                    },
+                },
+
+                {
+                    "name": "random_forest",
+                    "type": "random_forest",
+
+                    "params": {
+                        "n_estimators": 500,
+                        "criterion": "squared_error",
+                        "max_depth": None,
+                        "min_samples_split": 2,
+                        "min_samples_leaf": 1,
+                        "max_features": 0.3,
+                        "bootstrap": True,
+                        "n_jobs": 1,
+                        "random_state": "${general.seed}",
+                    },
+                },
+
+                {
+                    "name": "elastic_net",
+                    "type": "elastic_net",
+
+                    "params": {
+                        "alpha": 0.001,
+                        "l1_ratio": 0.5,
+                        "fit_intercept": True,
+                        "max_iter": 20000,
+                        "tol": 0.0001,
+                        "selection": "cyclic",
+                    },
+                },
+            ],
+        },
     },
 
     "model": {
-        "name": "27_average_catboost_rf_elastic_net",
-        "type": "ensemble",
+        "name": "28_voting_catboost_rf_elastic_net",
+        "type": "voting_ensemble",
         "params": {
             "batch_norm": {
                 "enabled": False,
