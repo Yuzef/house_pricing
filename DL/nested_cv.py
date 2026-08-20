@@ -40,6 +40,17 @@ def run_nested_cv(
     experiment_dir: Path,
     logger,
 ) -> pd.DataFrame:
+    """Выполнить nested cross-validation для DL-модели.
+
+    На каждом внешнем фолде внутренний CV с Optuna выбирает
+    гиперпараметры и рекомендуемое число эпох. Затем новая модель
+    обучается на всей train-части внешнего фолда и оценивается на
+    его validation-части.
+
+    Returns:
+        Таблица с RMSLE, параметрами и временем обучения каждого
+        внешнего фолда.
+    """
 
     outer_splits = build_cv_splits(
         X=X,

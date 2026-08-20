@@ -47,6 +47,13 @@ def select_nominal_columns(X):
     ]
 
 def build_preprocessor(cfg_preprocessing) -> ColumnTransformer:
+    """Собрать preprocessing для числовых и категориальных признаков.
+
+    Числовые признаки заполняются медианой и при необходимости
+    масштабируются. Категориальные признаки заполняются отдельно
+    и кодируются с помощью OneHotEncoder или OrdinalEncoder.
+    Для native CatBoost строковые категории сохраняются без кодирования.
+    """
 #             исходный X
 #                │
 #        ┌───────┴────────┐
