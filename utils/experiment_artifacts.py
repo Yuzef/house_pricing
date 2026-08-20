@@ -8,7 +8,7 @@ from sklearn.base import BaseEstimator
 def prepare_experiment_dir(config) -> Path:
     experiment_dir = (
         Path(config.paths.trained_models)
-        / str(config.model.name)
+        / str(config.general.experiment_name)
     )
 
     experiment_dir.mkdir(

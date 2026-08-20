@@ -35,7 +35,7 @@ def main() -> None:
     experiment_dir = prepare_experiment_dir(config)
 
     logger = setup_experiment_logger(experiment_dir)
-    logger.info("Experiment started: %s", config.model.name)
+    logger.info("Experiment started: %s", config.general.experiment_name)
 
     target_column = config.target.name
     id_column = config.id_column
@@ -121,7 +121,7 @@ def main() -> None:
             test_ids=test_ids
         )
 
-        logger.info("DL experiment comleted successfully")
+        logger.info("DL experiment completed successfully")
 
         return
     
@@ -184,7 +184,10 @@ def main() -> None:
         cfg_metric=config.metric,
     )
 
-    print(fold_results)
+    logger.info(
+        "Cross-validation results:\n%s",
+        fold_results.to_string(index=False),
+    )
 
     mean_val_score = fold_results["validation_score"].mean()
     std_val_score = fold_results["validation_score"].std()
@@ -238,6 +241,15 @@ def main() -> None:
         best_params_path = save_best_params(
             best_params=model_search.best_params_,
             experiment_dir=experiment_dir
+        )
+
+        logger.info(
+            "Search results saved to: %s",
+            search_results_path,
+        )
+        logger.info(
+            "Best parameters saved to: %s",
+            best_params_path,
         )
 
         final_pipeline = model_search.best_estimator_

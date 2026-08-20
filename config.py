@@ -12,8 +12,8 @@ config_dict = {
         "trained_models": "trained_models"
     },
     "target": {
-        "name": "SalePrice",
-        "transform": "log1p"
+        "name": "SalePrice"
+        # трансформирование таргета реализовано в коде.
     },
     "metric": {
         "name": "RMSLE", # TransformedTargetRegressor возвращает предсказания
@@ -78,10 +78,10 @@ config_dict = {
     },
 
     "ensemble": {
-        "enabled": True,
+        "enabled": False,
 
-    # "averaging", "voting" или "stacking".
-    "method": "stacking",
+        # "averaging", "voting" или "stacking".
+        "method": None,
 
         # Настройки эксперимента 27.
         "averaging": {
@@ -187,12 +187,24 @@ config_dict = {
     },
 
     "model": {
-        "name": "30_stacking_ridge_dollars",
-        "type": "stacking_ridge",
+        "name": "catboost",
+        "type": "catboost",
         "params": {
             "batch_norm": {
                 "enabled": False,
-            }
+            },
+            "loss_function": "RMSE",
+            "iterations": 1000,
+            "learning_rate": 0.05,
+            "depth": 5,
+            "l2_leaf_reg": 3.0,
+            "random_strength": 1.0,
+            "bootstrap_type": "Bayesian",
+            "bagging_temperature": 2.0,
+            "random_seed": "${general.seed}",
+            "thread_count": 1,
+            "verbose": False,
+            "allow_writing_files": False,
         }
     },
 
@@ -282,10 +294,6 @@ config_dict = {
 
     "dl": {
 
-        "embeddings": {
-            "enabled": False,
-        },
-
         "training": {
             "max_epochs": 100,
             "device": "cpu", # auto, mps not stable for AdamW
@@ -309,7 +317,6 @@ config_dict = {
     },
 
     "optuna": {
-        "study_name": "${model.name}",
         "target_n_trials": 15,
         "timeout_seconds": None,
         "n_jobs": 1,
