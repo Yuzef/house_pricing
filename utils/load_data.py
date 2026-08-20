@@ -24,6 +24,10 @@ AMES_NA_CATEGORY_COLUMNS = frozenset(
 )
 
 def read_project_csv(path) -> pd.DataFrame:
+    """
+    Загрузить Ames CSV,
+    сохранив структурные значения `NA` как категории.
+    """
     path = Path(path)
 
     if not path.is_file():

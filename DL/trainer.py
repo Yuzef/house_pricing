@@ -14,7 +14,7 @@ def train_one_epoch(
     model,
     loader,
     optimizer,
-    criterion, # ф-ция ошибки в виде объекта nn
+    criterion,
     device,
     gradient_clip_norm
 ):
@@ -151,6 +151,16 @@ def fit_model(
     initial_history=None
 ):
     """
+    Обучить модель с валидацией, checkpointing и Optuna pruning.
+
+    На каждой эпохе функция сохраняет историю обучения, обновляет scheduler
+    и при наличии validation loader отслеживает лучший RMSLE. Если передан
+    Optuna trial, промежуточная метрика используется для pruning.
+
+    Returns:
+        Словарь с лучшей метрикой, лучшей и последней эпохами,
+        числом шагов и полной историей обучения.
+
                     fit_model
                         │
                         ▼

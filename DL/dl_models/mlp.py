@@ -1,7 +1,3 @@
-# Linear(input_dim → hidden_dim)
-# ReLU
-# Linear(hidden_dim → 1)
-
 import torch
 from torch import nn
 
@@ -23,6 +19,12 @@ def get_activation(name: str) -> nn.Module:
     return activation_class()
 
 class HousePriceMLP(nn.Module):
+    """Полносвязная сеть для прогнозирования логарифма стоимости дома.
+
+    Модель поддерживает один или два скрытых слоя, dropout,
+    batch normalization и два режима обработки категориальных признаков:
+    One-Hot Encoding или обучаемые embeddings.
+    """
     def __init__(
         self,
         input_dim: int | None,

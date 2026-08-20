@@ -56,6 +56,13 @@ def run_dl_experiment(
     X_test,
     test_ids
 ) -> None:
+    """Запустить полный DL-эксперимент.
+
+    Workflow выполняет nested CV, финальный подбор гиперпараметров,
+    обучение на полной выборке, сохранение preprocessing и checkpoint,
+    создание submission и диагностических визуализаций.
+    """
+    
     seed = int(config.general.seed)
     seed_everything(seed)
 

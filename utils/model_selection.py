@@ -10,6 +10,10 @@ def build_model_search(
     cfg_tuning,
     cfg_metric
 ):
+    """
+    Создать GridSearchCV или RandomizedSearchCV
+    из конфигурации.
+    """
     param_space = OmegaConf.to_container(
         cfg_tuning.param_space,
         resolve=True,

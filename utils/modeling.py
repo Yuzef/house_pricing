@@ -27,6 +27,12 @@ from lightgbm import LGBMRegressor
 from xgboost import XGBRegressor
 
 def get_model_from_cfg(model_cfg, cat_features=None):
+    """Создать регрессионную модель или ensemble из конфигурации.
+
+    Одиночные модели оборачиваются в `TransformedTargetRegressor`,
+    который обучает регрессор на `log1p(SalePrice)` и возвращает
+    предсказания в исходной денежной шкале.
+    """
     model_type = str(model_cfg.type)
 
     model_params = OmegaConf.to_container(

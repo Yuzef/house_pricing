@@ -31,7 +31,15 @@ def build_cv_splits(
     y: pd.Series,
     cfg_validation
 ) -> list[tuple[np.ndarray, np.ndarray]]:
+    """Построить стратифицированные фолды для задачи регрессии.
 
+    Для использования StratifiedKFold непрерывный таргет временно
+    разбивается на квантильные ценовые диапазоны. Полученные категории
+    используются только для формирования фолдов.
+
+    Returns:
+        Список пар `(train_indices, validation_indices)`.
+    """
     if cfg_validation.strategy != "stratified_kfold":
         raise ValueError(
             f"Unsupported validation strategy: "

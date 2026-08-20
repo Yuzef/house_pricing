@@ -38,6 +38,10 @@ def save_split_indices(
     cv_splits,
     output_path: Path,
 ) -> Path:
+    """
+    Сохранить train/validation-индексы всех CV-фолдов
+    в NPZ-файл.
+    """
     split_arrays = {}
 
     for fold_index, (train_indices, valid_indices) in enumerate(cv_splits):

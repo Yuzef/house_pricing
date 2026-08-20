@@ -154,6 +154,12 @@ def prepare_fold(
     valid_indices,
     config
 ):
+    """Подготовить train и validation части одного DL-фолда.
+
+    Preprocessing обучается только на train-части фолда, что предотвращает
+    утечку данных. Функция возвращает преобразованные признаки, таргеты,
+    категориальные cardinalities и обученный feature pipeline.
+    """
     feature_pipeline = build_dl_feature_pipeline(config)
 
     # Разделение исходного X согласно индексам, которые дал CV.
@@ -231,6 +237,14 @@ def build_train_loader(
     drop_last: bool,
     X_cat: np.ndarray | None = None
 ):
+    """Создать воспроизводимый PyTorch DataLoader.
+
+    Поддерживаются датасеты только с числовыми признаками и датасеты
+    с отдельным тензором категориальных индексов.
+
+    Returns:
+        Пара `(data_loader, random_generator)`.
+    """
     feature_tensor = torch.from_numpy(X)
     target_tensor = torch.from_numpy(y)
 

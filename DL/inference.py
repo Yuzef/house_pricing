@@ -25,6 +25,14 @@ def create_dl_submission(
     device,
     batch_size: int
 ) -> Path:
+    """Загрузить DL-модель и preprocessing и сформировать submission.
+
+    Прогноз модели преобразуется из log1p-пространства обратно
+    в денежную шкалу. Отрицательные значения обрезаются до нуля.
+
+    Returns:
+        Путь к сохранённому submission.
+    """
 
     # Загрузка preprocessing.
     feature_pipeline = joblib.load(feature_pipeline_path)
