@@ -1,0 +1,8 @@
+2026-08-20 16:54:46 | INFO | Experiment started: 30_stacking_ridge_dollars
+2026-08-20 16:54:46 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-20 16:57:49 | INFO | Metrics saved to: trained_models/30_stacking_ridge_dollars/metrics.json
+2026-08-20 16:57:49 | INFO | CV RMSLE: 0.12315 +/- 0.01165
+2026-08-20 16:57:49 | INFO | CV results saved to: trained_models/30_stacking_ridge_dollars/cv_results.csv
+2026-08-20 16:58:35 | INFO | Model saved to: trained_models/30_stacking_ridge_dollars/model.joblib
+2026-08-20 16:58:35 | INFO | Submission saved to: trained_models/30_stacking_ridge_dollars/submission.csv
+2026-08-20 16:58:35 | INFO | Experiment completed successfully

@@ -63,7 +63,8 @@ def main() -> None:
     # Ensemble enabled:
     if (
         ensemble_enabled
-        and ensemble_method not in {"averaging", "voting"}
+        and ensemble_method
+        not in {"averaging", "voting", "stacking"}
     ):
         raise ValueError(
             f"Unknown ensemble method: {ensemble_method}"
@@ -129,6 +130,10 @@ def main() -> None:
 
     if ensemble_enabled and ensemble_method == "voting":
         active_model_cfg = config.ensemble.voting
+
+    elif ensemble_enabled and ensemble_method == "stacking":
+        active_model_cfg = config.ensemble.stacking
+
     else:
         active_model_cfg = config.model
 

@@ -15,8 +15,12 @@ from sklearn.linear_model import (
 from sklearn.compose import TransformedTargetRegressor
 from sklearn.ensemble import (
     RandomForestRegressor,
+    StackingRegressor,
     VotingRegressor,
 )
+
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 from catboost import CatBoostRegressor
 from lightgbm import LGBMRegressor
@@ -45,6 +49,40 @@ def get_model_from_cfg(model_cfg, cat_features=None):
 
         return VotingRegressor(
             estimators=estimators,
+            **model_params,
+        )
+
+    if model_type == "stacking_regressor":
+        estimators = [
+            (
+                str(estimator_cfg.name),
+                get_model_from_cfg(
+                    estimator_cfg,
+                    cat_features=cat_features,
+                ),
+            )
+            for estimator_cfg in model_cfg.estimators
+        ]
+
+        final_estimator = Pipeline(
+            steps=[
+                (
+                    "scaler",
+                    StandardScaler(),
+                ),
+                (
+                    "model",
+                    get_model_from_cfg(
+                        model_cfg.final_estimator,
+                        cat_features=None,
+                    ).regressor,
+                ),
+            ]
+        )
+
+        return StackingRegressor(
+            estimators=estimators,
+            final_estimator=final_estimator,
             **model_params,
         )
 

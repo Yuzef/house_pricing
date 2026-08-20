@@ -2,7 +2,7 @@ from omegaconf import OmegaConf
 
 config_dict = {
     'general': {
-        "experiment_name": "28_voting_catboost_rf_elastic_net",
+        "experiment_name": "30_stacking_ridge_dollars",
         "seed": 0xFACED,
         "task_type": "regression" 
     },
@@ -80,8 +80,8 @@ config_dict = {
     "ensemble": {
         "enabled": True,
 
-        # "averaging" или "voting".
-        "method": "voting",
+    # "averaging", "voting" или "stacking".
+    "method": "stacking",
 
         # Настройки эксперимента 27.
         "averaging": {
@@ -157,11 +157,38 @@ config_dict = {
                 },
             ],
         },
+        "stacking": {
+            "type": "stacking_regressor",
+
+            "params": {
+                # Внутренний CV для создания OOF-прогнозов.
+                # Это не tuning.
+                "cv": 5,
+
+                "n_jobs": 1,
+                "passthrough": False,
+                "verbose": 1,
+            },
+
+            # Используем те же базовые модели,
+            # что и в voting.
+            "estimators": "${ensemble.voting.estimators}",
+
+            "final_estimator": {
+                "name": "ridge_meta",
+                "type": "ridge",
+
+                "params": {
+                    "alpha": 10.0,
+                    "fit_intercept": True,
+                },
+            },
+        },
     },
 
     "model": {
-        "name": "28_voting_catboost_rf_elastic_net",
-        "type": "voting_ensemble",
+        "name": "30_stacking_ridge_dollars",
+        "type": "stacking_ridge",
         "params": {
             "batch_norm": {
                 "enabled": False,

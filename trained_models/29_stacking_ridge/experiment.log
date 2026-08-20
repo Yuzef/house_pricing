@@ -1,0 +1,8 @@
+2026-08-20 16:39:59 | INFO | Experiment started: 29_stacking_ridge
+2026-08-20 16:39:59 | INFO | Data loaded: train=(1460, 81), test=(1459, 80)
+2026-08-20 16:43:06 | INFO | Metrics saved to: trained_models/29_stacking_ridge/metrics.json
+2026-08-20 16:43:06 | INFO | CV RMSLE: 0.15389 +/- 0.01251
+2026-08-20 16:43:06 | INFO | CV results saved to: trained_models/29_stacking_ridge/cv_results.csv
+2026-08-20 16:43:52 | INFO | Model saved to: trained_models/29_stacking_ridge/model.joblib
+2026-08-20 16:43:52 | INFO | Submission saved to: trained_models/29_stacking_ridge/submission.csv
+2026-08-20 16:43:52 | INFO | Experiment completed successfully
